@@ -1,1848 +1,1071 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"
-  />
-  <meta name="theme-color" content="#0a0e14" />
-  <title>Delica Style Navi</title>
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
-
-  <style>
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html,body{
-      margin:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      background:#07090d;
-      color:#fff;
-      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
-    }
-
-    body{
-      touch-action:manipulation;
-    }
-
-    button,input{
-      font-family:inherit;
-    }
-
-    button{
-      cursor:pointer;
-      border:0;
-      outline:0;
-    }
-
-    :root{
-      --bg:#0a0e14;
-      --panel:#0f1620;
-      --panel2:#121c28;
-      --line:rgba(150,200,255,.15);
-      --blue:#54b7ff;
-      --blue2:#99dcff;
-      --text2:#a5b8c9;
-      --shadow:0 14px 38px rgba(0,0,0,.45);
-      --wood1:#4a2415;
-      --wood2:#2d140d;
-      --wood3:#5b2f1d;
-    }
-
-    #opening{
-      position:fixed;
-      inset:0;
-      z-index:99999;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at center, rgba(70,140,220,.14), transparent 34%),
-        linear-gradient(180deg,#020304,#091018 55%,#020304);
-      transition:opacity .85s ease, visibility .85s ease;
-    }
-
-    #opening.hide{
-      opacity:0;
-      visibility:hidden;
-      pointer-events:none;
-    }
-
-    .openingGlow{
-      position:absolute;
-      width:70vw;
-      height:70vw;
-      max-width:780px;
-      max-height:780px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(84,183,255,.18), transparent 70%);
-      filter:blur(34px);
-      animation:glow 3.6s ease-in-out infinite;
-    }
-
-    .openingSweep{
-      position:absolute;
-      top:0;
-      bottom:0;
-      width:180px;
-      left:-220px;
-      transform:skewX(-18deg);
-      filter:blur(10px);
-      background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(84,183,255,.04),
-        rgba(84,183,255,.16),
-        rgba(255,255,255,.25),
-        rgba(84,183,255,.12),
-        transparent
-      );
-      animation:sweep 2.8s ease .2s forwards;
-    }
-
-    .openingCenter{
-      position:relative;
-      text-align:center;
-      z-index:3;
-    }
-
-    .openingMark{
-      width:92px;
-      height:92px;
-      margin:0 auto 26px;
-      border:1px solid rgba(150,220,255,.3);
-      border-radius:50%;
-      box-shadow:inset 0 0 28px rgba(84,183,255,.05), 0 0 30px rgba(84,183,255,.08);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      opacity:0;
-      transform:scale(.84);
-      animation:appear .9s ease .3s forwards;
-    }
-
-    .openingMark::before{
-      content:"";
-      width:40px;
-      height:40px;
-      border-top:2px solid rgba(235,247,255,.95);
-      border-right:2px solid rgba(84,183,255,.8);
-      border-radius:10px 24px 10px 24px;
-      transform:rotate(45deg);
-    }
-
-    .openingTitle{
-      font-size:clamp(34px,7vw,74px);
-      font-weight:300;
-      letter-spacing:.18em;
-      color:#eef9ff;
-      opacity:0;
-      transform:translateY(8px);
-      text-shadow:0 0 14px rgba(84,183,255,.25);
-      animation:appearText 1s ease .75s forwards;
-    }
-
-    .openingSub{
-      margin-top:14px;
-      font-size:clamp(10px,1.5vw,16px);
-      letter-spacing:.46em;
-      color:#7ea9c7;
-      opacity:0;
-      animation:appearText .9s ease 1.1s forwards;
-    }
-
-    .openingStatus{
-      margin-top:20px;
-      font-size:10px;
-      letter-spacing:.28em;
-      color:#5d7285;
-      opacity:0;
-      animation:appearText .8s ease 1.45s forwards;
-    }
-
-    @keyframes glow{
-      0%,100%{opacity:.5;transform:scale(.96);}
-      50%{opacity:1;transform:scale(1.04);}
-    }
-
-    @keyframes sweep{
-      0%{left:-220px;opacity:0;}
-      15%{opacity:1;}
-      85%{opacity:1;}
-      100%{left:calc(100% + 220px);opacity:0;}
-    }
-
-    @keyframes appear{
-      to{opacity:1;transform:scale(1);}
-    }
-
-    @keyframes appearText{
-      to{opacity:1;transform:translateY(0);}
-    }
-
-    #app{
-      position:relative;
-      width:100%;
-      height:100%;
-      background:#05080d;
-      overflow:hidden;
-    }
-
-    /* ===== 本体フレーム ===== */
-
-    .headUnit{
-      position:absolute;
-      inset:0;
-      padding:18px 18px calc(112px + env(safe-area-inset-bottom)) 18px;
-      background:
-        linear-gradient(180deg,#0a0d12,#0b1016 35%,#080b10);
-    }
-
-    .screenFrame{
-      position:relative;
-      width:100%;
-      height:100%;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.06);
-      background:
-        linear-gradient(180deg,#10161d,#0a0f15);
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.02),
-        inset 0 0 30px rgba(255,255,255,.02);
-      overflow:hidden;
-    }
-
-    .topGuideBar{
-      position:absolute;
-      z-index:500;
-      top:12px;
-      left:12px;
-      right:12px;
-      height:64px;
-      border-radius:12px;
-      display:grid;
-      grid-template-columns:78px 1fr 170px;
-      align-items:center;
-      background:
-        linear-gradient(180deg,rgba(17,28,40,.94),rgba(8,14,21,.94));
-      border:1px solid rgba(150,200,255,.12);
-      box-shadow:0 8px 24px rgba(0,0,0,.35);
-      overflow:hidden;
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-    }
-
-    .guideArrow{
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:42px;
-      color:#a8dfff;
-      background:
-        linear-gradient(180deg,rgba(36,60,90,.45),rgba(16,28,42,.16));
-      border-right:1px solid rgba(150,200,255,.08);
-      text-shadow:0 0 12px rgba(84,183,255,.22);
-    }
-
-    .guideMain{
-      min-width:0;
-      padding:0 16px;
-    }
-
-    .guideDistance{
-      font-size:22px;
-      font-weight:300;
-      color:#f4fbff;
-      line-height:1.1;
-    }
-
-    .guideText{
-      margin-top:5px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      font-size:13px;
-      color:#bfd8ea;
-    }
-
-    .guideMeta{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:flex-end;
-      padding:0 14px;
-      gap:4px;
-      color:#d8efff;
-      font-size:12px;
-      background:
-        linear-gradient(180deg,rgba(18,37,59,.55),rgba(9,18,28,.2));
-      border-left:1px solid rgba(150,200,255,.08);
-    }
-
-    .guideMeta small{
-      color:#83a4bd;
-      font-size:10px;
-      letter-spacing:.08em;
-    }
-
-    .contentArea{
-      position:absolute;
-      inset:0;
-      display:grid;
-      grid-template-columns:1fr 270px;
-      gap:0;
-    }
-
-    .mapArea{
-      position:relative;
-      min-width:0;
-      background:#0e141b;
-      border-right:1px solid rgba(255,255,255,.05);
-    }
-
-    #map{
-      position:absolute;
-      inset:0;
-      z-index:1;
-    }
-
-    .leaflet-control-zoom,
-    .leaflet-control-attribution{
-      display:none;
-    }
-
-    .searchOverlay{
-      position:absolute;
-      z-index:450;
-      left:14px;
-      bottom:118px;
-      width:min(520px, calc(100% - 28px));
-      display:flex;
-      gap:10px;
-      padding:10px;
-      border-radius:14px;
-      background:rgba(8,13,20,.88);
-      border:1px solid rgba(150,200,255,.12);
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-    }
-
-    .searchOverlay input{
-      flex:1;
-      min-width:0;
-      height:46px;
-      padding:0 14px;
-      border-radius:12px;
-      border:1px solid rgba(150,200,255,.09);
-      background:rgba(255,255,255,.04);
-      color:white;
-      font-size:15px;
-    }
-
-    .searchOverlay input::placeholder{
-      color:#6f8498;
-    }
-
-    .searchAction{
-      width:52px;
-      height:46px;
-      border-radius:12px;
-      color:#e7f7ff;
-      font-size:18px;
-      background:linear-gradient(180deg,#14304b,#0a1828);
-      border:1px solid rgba(84,183,255,.25);
-      box-shadow:inset 0 0 12px rgba(84,183,255,.05);
-    }
-
-    .routeSummary{
-      position:absolute;
-      z-index:450;
-      left:14px;
-      top:90px;
-      padding:12px 15px;
-      min-width:220px;
-      border-radius:13px;
-      background:rgba(7,12,18,.88);
-      border:1px solid rgba(150,200,255,.12);
-      color:#eff9ff;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-    }
-
-    .routeSummaryTitle{
-      color:#7fa3bd;
-      font-size:10px;
-      letter-spacing:.14em;
-      margin-bottom:5px;
-    }
-
-    .routeSummaryValue{
-      font-size:19px;
-      font-weight:300;
-    }
-
-    .routeSummarySub{
-      margin-top:3px;
-      color:#b7cfdf;
-      font-size:12px;
-    }
-
-    .miniCurrentBtn{
-      position:absolute;
-      z-index:450;
-      right:16px;
-      bottom:120px;
-      width:60px;
-      height:60px;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:24px;
-      color:#dff3ff;
-      background:linear-gradient(180deg,rgba(22,35,50,.96),rgba(8,13,19,.96));
-      border:1px solid rgba(150,200,255,.14);
-      box-shadow:var(--shadow);
-    }
-
-    /* ===== 右パネル ===== */
-
-    .rightArea{
-      position:relative;
-      z-index:20;
-      display:flex;
-      flex-direction:column;
-      background:
-        linear-gradient(180deg,#1f0f09,#29140d 35%,#1b0d09 60%,#0d1622 100%);
-    }
-
-    .mediaTop{
-      position:relative;
-      height:210px;
-      padding:10px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background:
-        linear-gradient(135deg, rgba(255,180,80,.10), rgba(255,120,60,.04));
-    }
-
-    .mediaThumb{
-      width:100%;
-      height:100%;
-      border-radius:12px;
-      overflow:hidden;
-      position:relative;
-      background:
-        linear-gradient(135deg, #ffcf66, #f58e3a 40%, #7e2a10 100%);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-    }
-
-    .mediaThumb::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(circle at 65% 25%, rgba(255,255,255,.35), transparent 18%),
-        linear-gradient(180deg, rgba(255,255,255,.16), transparent 40%);
-      mix-blend-mode:screen;
-    }
-
-    .mediaCrowd{
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:0;
-      height:48%;
-      background:
-        linear-gradient(180deg, transparent, rgba(0,0,0,.2)),
-        linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.35));
-    }
-
-    .mediaTitle{
-      position:absolute;
-      left:16px;
-      bottom:12px;
-      right:16px;
-      font-size:15px;
-      font-weight:600;
-      letter-spacing:.02em;
-      text-shadow:0 2px 10px rgba(0,0,0,.35);
-    }
-
-    .mediaControls{
-      padding:14px 14px 12px;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      background:
-        linear-gradient(180deg, rgba(79,35,18,.60), rgba(36,16,11,.86));
-    }
-
-    .mediaMode{
-      color:#efc37a;
-      font-size:13px;
-      letter-spacing:.06em;
-      margin-bottom:10px;
-    }
-
-    .mediaButtons{
-      display:flex;
-      justify-content:center;
-      gap:16px;
-    }
-
-    .circleBtn{
-      width:48px;
-      height:48px;
-      border-radius:50%;
-      color:#fff3dd;
-      font-size:18px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18));
-      border:1px solid rgba(255,220,180,.14);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
-    }
-
-    .rightApps{
-      flex:1;
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:1px;
-      background:rgba(255,255,255,.06);
-    }
-
-    .rightTile{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      color:#dcefff;
-      background:
-        linear-gradient(180deg,#203247,#162536);
-      font-size:12px;
-      letter-spacing:.03em;
-    }
-
-    .rightTileIcon{
-      width:46px;
-      height:46px;
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.09);
-      font-size:22px;
-    }
-
-    /* ===== 下部ボタン ===== */
-
-    .hardwareBar{
-      position:absolute;
-      left:18px;
-      right:18px;
-      bottom:18px;
-      z-index:900;
-      height:82px;
-      border-radius:14px;
-      padding:8px 12px calc(8px + env(safe-area-inset-bottom));
-      display:grid;
-      grid-template-columns:140px 1fr;
-      align-items:center;
-      background:
-        linear-gradient(180deg,#050709,#020304);
-      border:1px solid rgba(255,255,255,.05);
-      box-shadow:
-        0 14px 30px rgba(0,0,0,.46),
-        inset 0 1px 0 rgba(255,255,255,.03);
-    }
-
-    .leftStatus{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:flex-start;
-      padding-left:8px;
-      gap:4px;
-      color:#dbeeff;
-    }
-
-    .leftStatusTop{
-      font-size:12px;
-      color:#8eb0c6;
-    }
-
-    .clock{
-      font-size:34px;
-      line-height:1;
-      font-weight:200;
-      letter-spacing:-.04em;
-    }
-
-    .buttonStrip{
-      display:grid;
-      grid-template-columns:repeat(6, 1fr);
-      gap:10px;
-      padding-left:12px;
-    }
-
-    .hwBtn{
-      position:relative;
-      height:54px;
-      border-radius:8px;
-      color:#eaf8ff;
-      font-size:11px;
-      letter-spacing:.05em;
-      background:
-        linear-gradient(180deg,#11161d,#05080d);
-      border:1px solid rgba(255,255,255,.06);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05),
-        inset 0 -10px 18px rgba(0,0,0,.35);
-    }
-
-    .hwBtn .small{
-      display:block;
-      margin-top:2px;
-      color:#ff7e61;
-      font-size:9px;
-      letter-spacing:.08em;
-    }
-
-    .hwBtn.active{
-      color:#fff;
-      border-color:rgba(84,183,255,.35);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05),
-        inset 0 0 18px rgba(84,183,255,.07),
-        0 0 15px rgba(84,183,255,.08);
-    }
-
-    /* ===== オーバーレイ ===== */
-
-    .overlay{
-      position:absolute;
-      z-index:700;
-      inset:0;
-      background:rgba(0,0,0,.36);
-      opacity:0;
-      pointer-events:none;
-      transition:.22s ease;
-    }
-
-    .overlay.show{
-      opacity:1;
-      pointer-events:auto;
-    }
-
-    .panel{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%, -50%) scale(.96);
-      width:min(820px, calc(100% - 34px));
-      border-radius:18px;
-      background:
-        linear-gradient(180deg, rgba(14,22,31,.98), rgba(8,13,18,.98));
-      border:1px solid rgba(150,200,255,.14);
-      box-shadow:0 25px 60px rgba(0,0,0,.55);
-      opacity:0;
-      transition:.22s ease;
-      overflow:hidden;
-    }
-
-    .overlay.show .panel{
-      opacity:1;
-      transform:translate(-50%, -50%) scale(1);
-    }
-
-    .panelHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:15px 18px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      background:linear-gradient(180deg,rgba(20,33,47,.88),rgba(10,16,24,.88));
-    }
-
-    .panelTitle{
-      font-size:15px;
-      letter-spacing:.10em;
-      color:#e8f7ff;
-    }
-
-    .closeBtn{
-      width:38px;
-      height:38px;
-      border-radius:10px;
-      background:rgba(255,255,255,.06);
-      color:#e6f7ff;
-      font-size:18px;
-      border:1px solid rgba(255,255,255,.05);
-    }
-
-    .panelBody{
-      padding:18px;
-    }
-
-    .tileGrid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:12px;
-    }
-
-    .menuTile{
-      min-height:92px;
-      padding:14px;
-      border-radius:14px;
-      text-align:left;
-      color:#eaf8ff;
-      background:linear-gradient(180deg,#162433,#0c1520);
-      border:1px solid rgba(150,200,255,.10);
-    }
-
-    .menuTile strong{
-      display:block;
-      margin-bottom:6px;
-      font-size:14px;
-    }
-
-    .menuTile small{
-      color:#87a2b6;
-      font-size:11px;
-    }
-
-    .routeModes{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:10px;
-      margin-top:12px;
-      margin-bottom:14px;
-    }
-
-    .routeMode{
-      height:54px;
-      border-radius:12px;
-      color:#d7efff;
-      background:linear-gradient(180deg,#142435,#0b141f);
-      border:1px solid rgba(150,200,255,.09);
-      font-size:12px;
-    }
-
-    .routeMode.active{
-      border-color:rgba(84,183,255,.32);
-      box-shadow:inset 0 0 18px rgba(84,183,255,.07);
-    }
-
-    .routeActions{
-      display:flex;
-      gap:10px;
-    }
-
-    .routeAction{
-      flex:1;
-      height:48px;
-      border-radius:12px;
-      background:#101a26;
-      color:#e6f8ff;
-      border:1px solid rgba(150,200,255,.09);
-    }
-
-    .routeAction.main{
-      background:linear-gradient(180deg,#16314d,#0b1726);
-      border-color:rgba(84,183,255,.26);
-    }
-
-    .audioPanelInner{
-      display:grid;
-      grid-template-columns:220px 1fr;
-      gap:18px;
-    }
-
-    .audioArt{
-      height:220px;
-      border-radius:16px;
-      background:
-        linear-gradient(135deg, #ffc866, #f58340 42%, #63200d 100%);
-      box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .audioArt::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.18), transparent 35%);
-    }
-
-    .audioInfo{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap:12px;
-    }
-
-    .audioInfo h3{
-      margin:0;
-      font-size:26px;
-      font-weight:600;
-    }
-
-    .audioInfo p{
-      margin:0;
-      color:#90aabc;
-      font-size:14px;
-    }
-
-    .audioLargeButtons{
-      display:flex;
-      gap:12px;
-      margin-top:10px;
-    }
-
-    .audioLargeButtons button{
-      min-width:70px;
-      height:54px;
-      border-radius:14px;
-      color:#eff9ff;
-      font-size:20px;
-      background:linear-gradient(180deg,#152537,#0b141f);
-      border:1px solid rgba(150,200,255,.10);
-    }
-
-    .toast{
-      position:absolute;
-      z-index:9500;
-      top:86px;
-      left:50%;
-      transform:translateX(-50%) translateY(-10px);
-      padding:12px 18px;
-      border-radius:14px;
-      color:#e9f8ff;
-      font-size:12px;
-      background:rgba(7,12,18,.96);
-      border:1px solid rgba(150,200,255,.14);
-      box-shadow:var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition:.22s ease;
-    }
-
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(0);
-    }
-
-    .myMarker{
-      width:22px;
-      height:22px;
-      border-radius:50%;
-      border:3px solid #f2fbff;
-      background:#49adff;
-      box-shadow:
-        0 0 0 7px rgba(73,173,255,.18),
-        0 0 18px rgba(73,173,255,.6);
-    }
-
-    .destMarker{
-      width:24px;
-      height:24px;
-      border:2px solid #fff;
-      border-radius:7px 7px 7px 2px;
-      background:#64c4ff;
-      transform:rotate(-45deg);
-      box-shadow:0 0 16px rgba(100,196,255,.52);
-    }
-
-    @media (max-width: 920px){
-      .contentArea{
-        grid-template-columns:1fr 220px;
-      }
-
-      .audioPanelInner{
-        grid-template-columns:1fr;
-      }
-
-      .audioArt{
-        height:180px;
-      }
-    }
-
-    @media (max-width: 760px){
-      .contentArea{
-        grid-template-columns:1fr;
-      }
-
-      .rightArea{
-        display:none;
-      }
-
-      .topGuideBar{
-        grid-template-columns:70px 1fr 120px;
-      }
-
-      .buttonStrip{
-        grid-template-columns:repeat(3, 1fr);
-      }
-
-      .hardwareBar{
-        height:124px;
-        grid-template-columns:1fr;
-        gap:8px;
-      }
-
-      .leftStatus{
-        flex-direction:row;
-        align-items:center;
-        justify-content:space-between;
-        padding-left:0;
-      }
-
-      .clock{
-        font-size:24px;
-      }
-
-      .tileGrid{
-        grid-template-columns:1fr 1fr;
-      }
-
-      .routeModes{
-        grid-template-columns:1fr 1fr;
-      }
-    }
-
-    @media (orientation:portrait){
-      body::after{
-        content:"横向きでの使用がおすすめです";
-        position:fixed;
-        z-index:100000;
-        left:20px;
-        right:20px;
-        bottom:20px;
-        padding:12px;
-        text-align:center;
-        color:#fff;
-        background:rgba(0,0,0,.76);
-        border-radius:14px;
-        font-size:12px;
-        pointer-events:none;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>純正風カーナビ - TOYOTA CHASER 関東専用・絶対案内版</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            /* スティングレー特有の鮮やかなブルーイルミ（よりギラギラに） */
+            --meter-glow-color: rgba(0, 150, 255, 0.9);
+            --meter-glow-edge: rgba(0, 212, 255, 1);
+        }
+        
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background-color: #050505; color: #fff; overflow: hidden; user-select: none; touch-action: manipulation; }
+        .container { display: flex; flex-direction: column; height: 100vh; position: relative; width: 100vw; }
+        
+        /* ★ オープニングアニメーション */
+        .startup-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #020202; z-index: 1000000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
+        .startup-logo-container { position: relative; width: 80%; max-width: 700px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeOutPhase1 0.5s ease-in-out 4.2s forwards; }
+        .startup-brand { font-family: 'Times New Roman', serif; font-size: clamp(1rem, 3vw, 1.5rem); color: #888; letter-spacing: 6px; opacity: 0; animation: fadeIn 1s ease-out 0.5s forwards; margin-bottom: 15px; }
+        .startup-model { font-family: 'Didot', 'Bodoni MT', 'Times New Roman', serif; font-style: italic; font-size: clamp(1.8rem, 4.5vw, 3.2rem); font-weight: 600; color: #fff; letter-spacing: 10px; text-shadow: 0 0 25px rgba(0, 212, 255, 0.8); opacity: 0; animation: scaleFadeIn 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s forwards; margin-bottom: 25px; text-align: center;}
+        .startup-line { width: 0; height: 1px; background: linear-gradient(90deg, transparent, #00d4ff, transparent); animation: expandLine 1.2s ease-in-out 1.8s forwards; box-shadow: 0 0 10px #00d4ff; margin-bottom: 20px; }
+        
+        .startup-terminal { width: 100%; max-width: 400px; height: 95px; font-family: monospace; font-size: 0.9rem; color: #00ff66; text-shadow: 0 0 5px #00ff66; text-align: left; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+        .term-line { opacity: 0; margin: 2px 0; }
+        .term-line:nth-child(1) { animation: termShow 0.1s forwards 2.0s; }
+        .term-line:nth-child(2) { animation: termShow 0.1s forwards 2.2s; }
+        .term-line:nth-child(3) { animation: termShow 0.1s forwards 2.4s; }
+        .term-line:nth-child(4) { animation: termShow 0.1s forwards 2.6s; color: #ffcc00; text-shadow: 0 0 5px #ffcc00;} /* 関東ロック演出 */
+        .term-line:nth-child(5) { animation: termShow 0.1s forwards 2.8s; }
+        .term-line:nth-child(6) { animation: termShow 0.1s forwards 3.3s; color: #fff; text-shadow: 0 0 10px #fff; font-weight: bold; }
+        @keyframes termShow { to { opacity: 1; } }
+
+        @keyframes fadeOutPhase1 { to { opacity: 0; visibility: hidden; } }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes scaleFadeIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes expandLine { to { width: 100%; } }
+
+        /* 警告画面（ネオン脈動） */
+        .warning-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; animation: warningPhase2 5s ease-in-out 4.8s forwards; }
+        .warning-title-box { position: relative; display: inline-block; padding: 20px 40px; margin-bottom: 40px; }
+        .warning-title-box::before {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 140%; height: 150%;
+            background: radial-gradient(ellipse at center, rgba(255,0,0,0.85) 0%, rgba(255,0,0,0.3) 50%, transparent 70%);
+            z-index: -1; filter: blur(15px); animation: neonPulse 1.5s infinite alternate;
+        }
+        @keyframes neonPulse { 0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.9); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } }
+        .warning-title { font-size: clamp(3rem, 8vw, 6rem); color: #fff; font-weight: 900; letter-spacing: 10px; margin: 0; text-shadow: 0 0 10px #ff0000, 0 0 30px #ff0000, 0 0 50px #ff0000; }
+        .warning-text { font-size: clamp(1.2rem, 3vw, 2.2rem); color: #f0f0f0; font-weight: bold; text-align: center; line-height: 1.8; letter-spacing: 4px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); padding: 0 20px; }
+        @keyframes warningPhase2 { 0% { opacity: 0; transform: scale(0.95); } 10% { opacity: 1; transform: scale(1); } 85% { opacity: 1; transform: scale(1); filter: blur(0); } 100% { opacity: 0; transform: scale(1.05); filter: blur(10px); } }
+        
+        .startup-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        /* メインエリア（地図＆2画面パネル） */
+        .main-display { display: flex; flex: 1; overflow: hidden; position: relative; width: 100%; }
+        
+        .map-screen { flex: 1; position: absolute; top:0; left:0; width:100%; height:100%; background-color: #eee; transition: background-color 0.5s ease; z-index: 10;}
+        .map-screen.hidden { opacity: 0; pointer-events: none; z-index: -1; }
+        #map { position: absolute; top: -35%; left: -35%; width: 170%; height: 170%; transition: transform 0.3s linear; transform-origin: center center; transform: translateZ(0); will-change: transform; backface-visibility: hidden; }
+        .leaflet-tile { outline: 1px solid transparent; backface-visibility: hidden; transition: filter 0.5s ease; }
+        .leaflet-control-attribution { display: none !important; }
+        
+        .dark-mode { background-color: #000; }
+        .dark-mode .leaflet-tile { filter: invert(100%) sepia(10%) hue-rotate(250deg) saturate(250%) brightness(130%) contrast(90%); }
+        
+        .map-overlay-left { position: absolute; top: 20px; left: 20px; z-index: 9900; display: flex; flex-direction: column; gap: 8px; }
+        .map-btn { background: rgba(30, 30, 30, 0.85); border: 1px solid #555; color: white; padding: 12px 15px; font-size: 1rem; font-weight: bold; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.6); cursor: pointer; text-align: center;}
+        .map-btn:active { background: rgba(0, 0, 0, 0.9); transform: scale(0.95); }
+        .btn-active-mode { border: 1px solid #00d4ff; color: #00d4ff; box-shadow: 0 0 10px rgba(0,212,255,0.4); }
+
+        .hud-telemetry { position: absolute; bottom: 10px; left: 20px; z-index: 9900; font-family: monospace; font-size: 0.95rem; color: #00ff66; text-shadow: 0 0 5px #00ff66; line-height: 1.4; pointer-events: none; background: rgba(0,0,0,0.6); padding: 8px 12px; border-radius: 4px; border-left: 2px solid #00ff66; }
+        .hud-telemetry span.lbl { color: #aaa; margin-right: 8px; font-size: 0.8rem; text-shadow: none; }
+        .dark-mode .hud-telemetry { color: #00d4ff; text-shadow: 0 0 5px #00d4ff; border-left: 2px solid #00d4ff; }
+        
+        .top-right-clock { position: absolute; top: 20px; right: 20px; z-index: 9900; font-size: 2.8rem; font-weight: bold; color: #fff; text-shadow: 0 2px 4px #000, 0 0 15px #00d4ff; font-family: 'Helvetica Neue', Arial, sans-serif; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); pointer-events: none; }
+
+        /* ==============================================================
+           ★ 超ゴツ・3連メーター・オービスレーダー画面
+        ============================================================== */
+        .radar-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #020202; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; z-index: 20; opacity: 1; transition: opacity 0.4s ease; overflow: hidden; padding-top: 10px;}
+        .radar-screen.hidden { opacity: 0; pointer-events: none; z-index: -1; }
+
+        /* ★ POLICE アラート背景 */
+        .police-alert-bg { 
+            position: absolute; top: 50%; left: 5%; width: 45vh; height: 60vh; 
+            transform: translateY(-50%); 
+            background-image: url('1308.jpg'); 
+            background-size: contain; background-repeat: no-repeat; background-position: center; 
+            opacity: 0; z-index: 1; pointer-events: none; mix-blend-mode: screen; 
+        }
+        .radar-screen.alert-mode .police-alert-bg { animation: policeFlash 0.15s infinite alternate; }
+        @keyframes policeFlash { 
+            0% { opacity: 0.1; filter: sepia(1) hue-rotate(-50deg) saturate(10) brightness(0.5) blur(2px) drop-shadow(0 0 10px red); } 
+            100% { opacity: 0.8; filter: sepia(1) hue-rotate(-50deg) saturate(15) brightness(1.2) blur(0px) drop-shadow(0 0 40px red); } 
+        }
+
+        .side-light { position: absolute; top: 5%; width: 8px; height: 90%; border-radius: 4px; z-index: 9500; transition: all 0.2s ease-in-out; }
+        .side-light.left { left: 15px; }
+        .side-light.right { right: 15px; }
+
+        @keyframes flashBlue { 0%, 100% { background-color: #00d4ff; box-shadow: 0 0 10px #00d4ff, 0 0 20px #0088ff; opacity: 0.2; } 50% { background-color: #e0f7ff; box-shadow: 0 0 25px #00d4ff, 0 0 45px #0088ff; opacity: 0.8; } }
+        .mode-blue { animation: flashBlue 2.5s infinite ease-in-out; }
+
+        @keyframes flashRed { 0%, 100% { background-color: #ff0000; box-shadow: 0 0 15px #ff0000, 0 0 30px #aa0000; opacity: 0.3; } 50% { background-color: #ffaaaa; box-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000; opacity: 1; } }
+        .mode-red { animation: flashRed 0.15s infinite ease-in-out; }
+
+        .digital-speed-top { text-align: center; margin-bottom: 0; z-index: 50; margin-top: 2vh;}
+        .digi-speed-val { font-size: 7.5rem; font-weight: 900; font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1; color: #fff; text-shadow: 0 0 20px var(--meter-glow-color); transition: color 0.2s, text-shadow 0.2s; }
+        .digi-speed-unit { font-size: 2rem; color: #aaa; margin-left: 5px; font-weight: bold;}
+        .digi-limit-box { margin-top: 5px; font-size: 1.4rem; color: #ffcc00; border: 2px solid #ffcc00; padding: 2px 20px; border-radius: 4px; display: inline-block; font-weight: bold; background: rgba(255,204,0,0.1); box-shadow: 0 0 10px rgba(255,204,0,0.2); letter-spacing: 2px;}
+        .radar-warn-text { color: #ff1a1a; font-size: 1.6rem; font-weight: 900; margin-top: 5px; text-shadow: 0 0 15px #ff0000; animation: blinkText 0.5s infinite alternate; visibility: hidden; }
+
+        .meters-dashboard { display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 1vh; gap: -6vh; z-index: 10;}
+        .meter-box { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .meter-box.side-meter { z-index: 5; transform: translateY(6vh); }
+        .meter-box.side-meter .meter-gauge-container { width: 32vh; height: 32vh; border-width: 8px; }
+        .meter-box.center-meter { z-index: 10; }
+        .meter-box.center-meter .meter-gauge-container { width: 46vh; height: 46vh; border-width: 12px; }
+
+        .meter-gauge-container { 
+            position: relative; border-radius: 50%; border-style: solid; border-color: #777; border-top-color: #bbb; border-bottom-color: #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,1), inset 0 0 30px rgba(0,0,0,1), inset 0 0 10px rgba(0,212,255,0.3), 0 0 15px rgba(0,212,255,0.2); 
+            background: radial-gradient(circle at 50% 60%, #001133 0%, #000a22 60%, #000000 100%); 
+            display: flex; justify-content: center; align-items: center; overflow: hidden; 
+        }
+
+        .screw { position: absolute; width: 16px; height: 16px; background: radial-gradient(circle, #999, #333); border-radius: 50%; border: 1px solid #000; box-shadow: inset 0 1px 2px rgba(255,255,255,0.5), 0 3px 5px rgba(0,0,0,0.9); z-index: 25; }
+        .screw::after { content: ''; position: absolute; top: 50%; left: 15%; width: 70%; height: 2px; background: #111; box-shadow: 0 1px 0 rgba(255,255,255,0.2); transform: translateY(-50%) rotate(45deg); }
+        .screw.tl { top: 8%; left: 8%; } .screw.tr { top: 8%; right: 8%; transform: rotate(30deg); }
+        .screw.bl { bottom: 8%; left: 8%; transform: rotate(70deg); } .screw.br { bottom: 8%; right: 8%; transform: rotate(-20deg); }
+
+        .meter-illumination {
+            position: absolute; top: 12%; left: 12%; width: 76%; height: 76%; border-radius: 50%;
+            background: radial-gradient(circle, transparent 40%, var(--meter-glow-color) 75%, var(--meter-glow-edge) 95%, transparent 100%);
+            z-index: 2; -webkit-mask-image: conic-gradient(from 225deg, black 0%, black 75%, transparent 75%); transition: background 0.3s;
+        }
+
+        .meter-ticks { 
+            position: absolute; top: 2%; left: 2%; width: 96%; height: 96%; border-radius: 50%; 
+            background: repeating-conic-gradient(from 225deg, #fff 0deg 1.5deg, transparent 1.5deg 8deg); 
+            -webkit-mask-image: radial-gradient(transparent 88%, black 90%, black 100%); z-index: 3;
+        }
+        .center-meter .meter-ticks { background: repeating-conic-gradient(from 225deg, #fff 0deg 2.5deg, transparent 2.5deg 10deg); }
+
+        .meter-num { position: absolute; top: 50%; left: 50%; font-weight: 900; color: #fff; text-shadow: 0 0 5px #00d4ff; z-index: 6; font-family: 'Helvetica Neue', Arial, sans-serif; transition: color 0.2s, text-shadow 0.2s; }
+        .center-meter .meter-num { font-size: 1.6rem; } .side-meter .meter-num { font-size: 1.1rem; }
+
+        .meter-needle { 
+            position: absolute; bottom: 50%; left: 50%; width: 6px; height: 42%; 
+            background: linear-gradient(to right, #600 0%, #ff1a1a 50%, #600 100%); 
+            transform-origin: bottom center; transform: translateX(-50%) rotate(-135deg); 
+            border-radius: 3px 3px 0 0; box-shadow: 0 0 15px rgba(255,0,0,1); z-index: 10; transition: transform 0.2s linear;
+        }
+        .center-meter .meter-needle { width: 8px; height: 44%; }
+
+        .meter-center-cap { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 28%; height: 28%; 
+            background: radial-gradient(circle, #333, #000); border-radius: 50%; border: 3px solid #555; box-shadow: 0 5px 20px rgba(0,0,0,1); z-index: 15; 
+        }
+        .center-meter .meter-center-cap { width: 32%; height: 32%; }
+
+        .meter-title-in { position: absolute; top: 68%; left: 50%; transform: translateX(-50%); font-size: 0.9rem; font-weight: bold; color: #fff; text-shadow: 0 0 5px #fff; z-index: 12; letter-spacing: 2px;}
+        .center-meter .meter-title-in { top: 68%; font-size: 1.2rem; }
+        .meter-bottom-val { position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%); font-size: 1.4rem; font-weight: bold; color: #fff; z-index: 12; font-family: 'Helvetica Neue', Arial, sans-serif;}
+
+        .radar-screen.alert-mode { --meter-glow-color: rgba(255, 0, 0, 0.95); --meter-glow-edge: rgba(255, 50, 50, 1); }
+        .radar-screen.alert-mode .meter-gauge-container { box-shadow: 0 20px 40px rgba(0,0,0,1), inset 0 0 30px rgba(0,0,0,1), inset 0 0 20px rgba(255,0,0,0.6), 0 0 30px rgba(255,0,0,0.5); border-color: #500; border-top-color: #f55; }
+        .radar-screen.alert-mode .digi-speed-val { color: #ff0000; text-shadow: 0 0 40px #ff0000, 0 0 20px #ff0000; }
+        .radar-screen.alert-mode .meter-bottom-val { color: #ffaaaa; text-shadow: 0 0 10px #ff0000; }
+        .radar-screen.alert-mode .meter-num { color: #ffaaaa; text-shadow: 0 0 10px #ff0000; }
+
+        /* ============================================================== */
+
+        /* 下部パネル */
+        .hardware-panel { height: 95px; width: 100%; background: repeating-linear-gradient(45deg, #111 0px, #111 5px, #1a1a1a 5px, #1a1a1a 10px); border-top: 2px solid #000; box-shadow: 0 -5px 25px rgba(0,0,0,1); display: flex; justify-content: space-between; align-items: center; padding: 0 10px; z-index: 9999; position: relative; flex-shrink: 0; }
+        .hw-group { position: absolute; display: flex; align-items: center; gap: 8px; height: 100%; top: 0; width: calc(50% - 55px); }
+        .left-group { left: 10px; justify-content: flex-start; }
+        .right-group { right: 10px; justify-content: flex-end; }
+        .luxury-badge { background: linear-gradient(135deg, #444, #111); padding: 0 12px; border-radius: 4px; border: 1px solid #666; border-bottom: 2px solid #000; color: #d4d4d4; font-family: 'Times New Roman', serif; font-size: clamp(0.7rem, 1.2vw, 0.85rem); letter-spacing: 2px; text-shadow: -1px -1px 1px #000, 1px 1px 1px #666; box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset 0 1px 1px rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; height: 40px; white-space: nowrap; flex-shrink: 1; font-weight: bold; overflow: hidden; }
+
+        .hw-btn { flex: 1; min-width: 45px; max-width: 80px; background: linear-gradient(to bottom, #5a5a5a 0%, #303030 40%, #151515 100%); border: 1px solid #000; border-top: 2px solid #888; border-bottom: 4px solid #050505; color: #eee; height: 55px; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: clamp(1rem, 2.5vw, 1.4rem); font-weight: bold; box-shadow: 0 8px 15px rgba(0,0,0,0.9), inset 0 2px 4px rgba(255,255,255,0.2); cursor: pointer; position: relative; transition: all 0.1s; white-space: nowrap; }
+        .hw-btn:active { transform: translateY(4px); border-top: 1px solid #111; border-bottom: 1px solid #000; box-shadow: 0 2px 4px rgba(0,0,0,0.9), inset 0 5px 10px rgba(0,0,0,0.9); background: linear-gradient(to bottom, #222 0%, #0a0a0a 100%); }
+        .hw-btn-text { font-size: clamp(0.7rem, 1.5vw, 0.9rem); padding: 0 5px; }
+
+        @keyframes rgbNeon { 0%   { background-color: #ff3333; box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; } 16%  { background-color: #ff00ff; box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff; } 33%  { background-color: #0088ff; box-shadow: 0 0 15px #0088ff, 0 0 30px #0088ff; } 50%  { background-color: #00ffff; box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff; } 66%  { background-color: #00ff00; box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00; } 83%  { background-color: #ffff00; box-shadow: 0 0 15px #ffff00, 0 0 30px #ffff00; } 100% { background-color: #ff3333; box-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000; } }
+        .hw-btn::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 85%; height: 5px; border-radius: 3px; animation: rgbNeon 6s infinite linear; opacity: 1; }
+        .neon-blue { color: #fff; text-shadow: 0 0 5px #00d4ff, 0 0 10px #008cff; }
+
+        /* 中央の時計 */
+        .analog-clock { flex: 0 0 85px; width: 85px; height: 85px; margin: 0 auto; border-radius: 50%; border: 3px solid #ccc; border-top-color: #eee; border-bottom-color: #888; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,0,0,0.5); z-index: 10000; background: #000; }
+        .clock-inner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; z-index: 1; -webkit-mask-image: -webkit-radial-gradient(white, black); mask-image: radial-gradient(white, black); -webkit-transform: translateZ(0); transform: translateZ(0); }
+        .clock-face { width: 100%; height: 100%; position: relative; z-index: 5; background: radial-gradient(circle, #1a3c75 0%, #0d1e3f 80%, #050b18 100%); border-radius: 50%; }
+        .clock-sunray { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, rgba(255,255,255,0.03) 0deg 5deg, transparent 5deg 10deg); pointer-events: none; }
+        .clock-tachymeter { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: repeating-conic-gradient(from 0deg, #aaa 0deg 1deg, transparent 1deg 6deg); -webkit-mask-image: radial-gradient(transparent 93%, black 95%); pointer-events: none; }
+        .clock-inner::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); transform: rotate(30deg); animation: gemShine 5s infinite linear; pointer-events: none; z-index: 20; }
+        @keyframes gemShine { 0% { transform: translateX(-100%) rotate(30deg); } 20% { transform: translateX(100%) rotate(30deg); } 100% { transform: translateX(100%) rotate(30deg); } }
+
+        .clock-logo { position: absolute; top: 16px; width: 100%; text-align: center; color: #fff; font-size: 5px; font-weight: bold; letter-spacing: 0.5px; z-index: 5; font-family: 'Helvetica Neue', Arial, sans-serif; text-shadow: 0 1px 1px #000; }
+        .clock-logo span { font-size: 3px; font-weight: normal; color: #aaa; border: 0.5px solid #aaa; padding: 0 1px; border-radius: 1px; display: inline-block; margin-top: 1px; }
+
+        .sub-dial { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); position: absolute; background: radial-gradient(circle, #152b60, #0b1836); box-shadow: inset 0 0 5px #000; z-index: 8; display: flex; justify-content: center; align-items: center; }
+        .sub-dial::before { content: ''; position: absolute; width: 90%; height: 90%; border-radius: 50%; background: repeating-radial-gradient(circle, transparent, transparent 1px, rgba(255,255,255,0.05) 1px, rgba(255,255,255,0.05) 2px); }
+        .left-dial { top: 50%; left: 10px; transform: translateY(-50%); }
+        .right-dial { top: 50%; right: 10px; transform: translateY(-50%); }
+        .bottom-dial { bottom: 10px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px;}
+        
+        .sub-label { position: absolute; bottom: 3px; width: 100%; text-align: center; font-size: 4px; color: #ccc; line-height: 1; font-weight: normal; z-index: 9;}
+        .sub-hand { width: 1.5px; height: 8px; background: #fff; position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(0deg); transition: transform 0.5s; box-shadow: 0 0 2px rgba(0,0,0,0.8); z-index: 10;}
+
+        .clock-index { position: absolute; background: linear-gradient(to right, #aaa, #fff, #aaa); box-shadow: 0 1px 2px rgba(0,0,0,0.8); z-index: 7; border-radius: 1px; }
+        .index-12 { top: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 8px; }
+        .index-6 { bottom: 4px; left: 50%; transform: translateX(-50%); width: 4px; height: 6px; }
+        .index-3 { right: 4px; top: 50%; transform: translateY(-50%); width: 8px; height: 4px; }
+        .index-9 { left: 4px; top: 50%; transform: translateY(-50%); width: 8px; height: 4px; }
+        
+        .hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; transform: translateX(-50%) rotate(0deg); filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.6)); }
+        .hour-hand { width: 4px; height: 22px; z-index: 10; background: linear-gradient(to right, #888 0%, #fff 20%, #ddd 80%, #888 100%); clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%); }
+        .hour-hand::after { content: ''; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 1.5px; height: 60%; background: #fff; }
+        .minute-hand { width: 3px; height: 32px; z-index: 11; background: linear-gradient(to right, #888 0%, #fff 20%, #ddd 80%, #888 100%); clip-path: polygon(50% 0%, 100% 15%, 100% 100%, 0% 100%, 0% 15%); }
+        .minute-hand::after { content: ''; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); width: 1px; height: 70%; background: #fff; }
+        .second-hand { width: 1px; height: 36px; background: #ddd; z-index: 12; }
+        .center-dot { width: 4px; height: 4px; border-radius: 50%; background: #ddd; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 13; box-shadow: 0 0 3px rgba(0,0,0,0.8); }
+
+        /* プレビュー / モーダル */
+        .route-preview { position: fixed; bottom: -350px; left: 0; right: 0; background: linear-gradient(to bottom, #1a1a1a, #050505); border-top: 3px solid #00d4ff; z-index: 9950; padding: 20px; display: flex; flex-direction: column; gap: 15px; transition: bottom 0.3s ease-in-out; box-shadow: 0 -5px 20px rgba(0,0,0,0.8); }
+        .route-preview.show { bottom: 95px; } 
+        .preview-header { font-size: 1.4rem; font-weight: bold; color: #fff; text-align: center; }
+        .preview-tabs { display: flex; gap: 10px; }
+        .preview-tab { flex: 1; text-align: center; padding: 15px; background: #333; border: 2px solid #555; border-radius: 5px; font-size: 1.2rem; font-weight: bold; color: #aaa; cursor: pointer; }
+        .preview-tab.active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+        .preview-info { font-size: 1.4rem; text-align: center; color: #eee; padding: 15px; background: #000; border-radius: 5px; border: 1px solid #444; font-weight: bold;}
+        .preview-actions { display: flex; gap: 15px; }
+        .preview-btn { flex: 1; padding: 18px; text-align: center; font-size: 1.5rem; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .preview-btn.cancel { background: #555; color: #fff; border: 1px solid #777;}
+        .preview-btn.start { background: #00d4ff; color: #000; box-shadow: 0 0 15px #00d4ff; }
+
+        .system-modal { position: fixed; top: 15%; left: 5%; right: 5%; bottom: 15%; background: linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 100%); border: 2px solid #444; box-shadow: 0 15px 40px rgba(0,0,0,0.9); border-radius: 8px; z-index: 100000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
+        .modal-header { font-size: 1.6rem; border-bottom: 2px solid #00d4ff; padding-bottom: 15px; margin-bottom: 20px; color: #fff; text-shadow: 0 0 10px #00d4ff; font-weight: bold; }
+        .modal-btn { background: linear-gradient(to bottom, #333, #222); padding: 20px 25px; margin-bottom: 15px; border-radius: 5px; font-size: 1.3rem; border: 1px solid #555; cursor: pointer; display: flex; align-items: center; color: #ddd; transition: 0.1s;}
+        .modal-btn:active { background: #00d4ff; color: #000; border-color: #00d4ff; }
+        .modal-close { background: linear-gradient(to bottom, #800, #500); padding: 18px; border-radius: 5px; text-align: center; font-size: 1.3rem; margin-top: auto; cursor: pointer; border: 1px solid #f55; color: #fff; font-weight: bold; }
+        .modal-close:active { background: #f00; transform: scale(0.98); }
+        .search-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-input { flex: 1; padding: 15px; border-radius: 5px; border: 1px solid #555; background: #222; color: #fff; font-size: 1.2rem; }
+        .search-btn { background: #00d4ff; color: #000; padding: 15px 25px; border-radius: 5px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .cat-btn { background: #2a2a2a; border: 1px solid #444; border-radius: 5px; padding: 15px; text-align: center; font-size: 1.1rem; color: #eee; cursor: pointer; }
+        .results-list-container { display: flex; flex-direction: column; gap: 12px; max-height: 55vh; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
+        .result-item { background: #222; border: 1px solid #555; padding: 18px; border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+
+        #toast { visibility: hidden; min-width: 300px; background-color: rgba(0, 0, 0, 0.85); color: #fff; text-align: center; border-radius: 10px; padding: 20px; position: fixed; z-index: 10000; left: 50%; bottom: 115px; transform: translateX(-50%); font-size: 1.2rem; border: 1px solid #00d4ff; box-shadow: 0 5px 20px rgba(0,0,0,0.7); opacity: 0; transition: opacity 0.3s, bottom 0.3s; line-height: 1.5; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 115px; }
+        
+        .info-screen { width: 0; opacity: 0; overflow: hidden; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); background: linear-gradient(to bottom, #1a1a1a, #050505); border-left: 0px solid #00d4ff; display: flex; flex-direction: column; box-shadow: inset 10px 0 20px rgba(0,0,0,0.8); z-index: 9000;}
+        .main-display.active-2screen .info-screen { width: 350px; opacity: 1; border-left: 3px solid #00d4ff; }
+        .info-content { min-width: 320px; padding: 15px; display: flex; flex-direction: column; height: 100%; opacity: 0; transition: opacity 0.3s ease; }
+        .main-display.active-2screen .info-content { opacity: 1; transition-delay: 0.2s; }
+        .info-sign { background: linear-gradient(to bottom, #009944, #007733); border-radius: 6px; border: 2px solid #fff; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.7);}
+        .info-sign-arrow { font-size: 3.5rem; color: #fff; line-height: 1; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: bold; }
+        .info-sign-text { font-size: 1.6rem; color: #fff; font-weight: bold; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.5); margin-top: 5px;}
+        .info-road-view { flex: 1; border-radius: 6px; position: relative; overflow: hidden; border: 2px solid #333; display: block; perspective: 300px; background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 40%, #555 40%, #222 100%);}
+        .road-surface { position: absolute; bottom: -50px; left: -50%; width: 200%; height: 120%; background: #444; transform: rotateX(70deg); border-left: 8px solid #fff; border-right: 8px solid #fff; box-shadow: inset 0 20px 50px rgba(0,0,0,0.8);}
+        .road-lane { position: absolute; top: 0; left: 50%; width: 6px; height: 100%; background: linear-gradient(to bottom, transparent 50%, #fff 50%); background-size: 100% 80px; transform: translateX(-50%); animation: moveLine 0.4s linear infinite; }
+        .info-bottom { background: rgba(0,0,0,0.8); padding: 15px; border-radius: 6px; margin-top: 15px; text-align: center; border: 1px solid #444;}
+        .info-dist-label { font-size: 1.2rem; color: #aaa; }
+        .info-dist { font-size: 2.5rem; color: #fff; font-weight: bold; text-shadow: 0 0 15px #00d4ff; margin: 5px 0;}
+    </style>
 </head>
 <body>
-
-  <div id="opening">
-    <div class="openingGlow"></div>
-    <div class="openingSweep"></div>
-    <div class="openingCenter">
-      <div class="openingMark"></div>
-      <div class="openingTitle">NEON DRIVE</div>
-      <div class="openingSub">NAVIGATION SYSTEM</div>
-      <div class="openingStatus">INITIALIZING</div>
-    </div>
-  </div>
-
-  <div id="app">
-
-    <div class="headUnit">
-      <div class="screenFrame">
-
-        <div class="topGuideBar">
-          <div class="guideArrow" id="guideArrow">↑</div>
-
-          <div class="guideMain">
-            <div class="guideDistance" id="guideDistance">ルート未設定</div>
-            <div class="guideText" id="guideText">目的地を検索してください</div>
-          </div>
-
-          <div class="guideMeta">
-            <div id="metaEta">--:--</div>
-            <small>到着予定</small>
-          </div>
+    <!-- オープニング画面 -->
+    <div id="startupOverlay" class="startup-overlay">
+        <div class="startup-logo-container">
+            <div class="startup-brand">NEON EXCLUSIVE</div>
+            <div class="startup-model">DRIVE YOUR AMBITION</div>
+            <div class="startup-line"></div>
+            <div class="startup-system">NAVIGATION SYSTEM INITIALIZING...</div>
+            <div class="startup-terminal">
+                <div class="term-line">>> CPU DIAGNOSTICS ... OK</div>
+                <div class="term-line">>> MEMORY ALLOCATION ... OK</div>
+                <div class="term-line">>> GPS SIGNAL ... ACQUIRED</div>
+                <div class="term-line">>> REGION LOCK: KANTO ... ENABLED</div>
+                <div class="term-line">>> RADAR SCANNER ... ONLINE</div>
+                <div class="term-line">>> ALL SYSTEMS READY.</div>
+            </div>
         </div>
 
-        <div class="contentArea">
+        <div class="warning-container">
+            <div class="warning-title-box">
+                <div class="warning-title">⚠️警告⚠️</div>
+            </div>
+            <div class="warning-text">飲酒状態、睡眠不足、過信した運転は危険です。<br>安全運転を心がけましょう。</div>
+        </div>
+    </div>
 
-          <div class="mapArea">
-            <div id="map"></div>
+    <div class="container">
+        <!-- デジタル時計 -->
+        <div class="top-right-clock" id="digitalClock">--:--</div>
 
-            <div class="routeSummary" id="routeSummary">
-              <div class="routeSummaryTitle">STATUS</div>
-              <div class="routeSummaryValue" id="routeSummaryValue">GPS待機中</div>
-              <div class="routeSummarySub" id="routeSummarySub">現在地を取得しています</div>
+        <div class="main-display" id="mainDisplay">
+            
+            <!-- マップ画面 -->
+            <div id="mapScreen" class="map-screen dark-mode">
+                <div id="map"></div>
+                <div class="hud-telemetry" id="telemetryHud">
+                    <div><span class="lbl">LAT:</span><span id="tLat">---</span></div>
+                    <div><span class="lbl">LON:</span><span id="tLon">---</span></div>
+                    <div><span class="lbl">ALT:</span><span id="tAlt">---</span> m</div>
+                    <div><span class="lbl">HDG:</span><span id="tHdg">---</span>°</div>
+                </div>
+                <div class="map-overlay-left">
+                    <div class="map-btn sound-btn" onclick="zoomInMap()">広域表示(＋)</div>
+                    <div class="map-btn sound-btn" onclick="zoomOutMap()">詳細表示(－)</div>
+                    <div class="map-btn sound-btn btn-active-mode" id="headingToggleBtn" onclick="toggleHeadingMode()" style="margin-top: 15px;">🧭 進行方向上</div>
+                </div>
             </div>
 
-            <div class="searchOverlay">
-              <input
-                id="searchInput"
-                type="text"
-                placeholder="住所・施設名を入力"
-                autocomplete="off"
-              />
-              <button class="searchAction" id="searchBtn">⌕</button>
+            <!-- ★ 超ゴツ・3連メーター画面 -->
+            <div id="radarScreen" class="radar-screen hidden">
+                <div class="police-alert-bg"></div>
+                <div class="side-light left mode-blue" id="sideLightL"></div>
+                <div class="side-light right mode-blue" id="sideLightR"></div>
+
+                <div class="digital-speed-top">
+                    <div onclick="demoSpeedToggle()" style="cursor:pointer;" title="タップでテスト速度アップ！">
+                        <span class="digi-speed-val" id="radarSpeed">0</span>
+                        <span class="digi-speed-unit">km/h</span>
+                    </div>
+                    <div class="digi-limit-box">LIMIT <span id="radarLimit">60</span></div>
+                    <div class="radar-warn-text" id="radarWarnText">!! WARNING: ORBIS DETECTED !!</div>
+                </div>
+
+                <div class="meters-dashboard">
+                    <!-- 左：気温メーター -->
+                    <div class="meter-box side-meter">
+                        <div class="meter-gauge-container">
+                            <div class="screw tl"></div><div class="screw tr"></div><div class="screw bl"></div><div class="screw br"></div>
+                            <div class="meter-ticks"></div>
+                            <div class="meter-illumination"></div>
+                            
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-135deg) translateY(-10.5vh) rotate(135deg);"> -10</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-81deg) translateY(-10.5vh) rotate(81deg);"> 0</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-27deg) translateY(-10.5vh) rotate(27deg);"> 10</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(27deg) translateY(-10.5vh) rotate(-27deg);"> 20</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(81deg) translateY(-10.5vh) rotate(-81deg);"> 30</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(135deg) translateY(-10.5vh) rotate(-135deg);"> 40</div>
+
+                            <div class="meter-needle" id="needleTemp"></div>
+                            <div class="meter-center-cap"></div>
+                            <div class="meter-title-in">TEMP</div>
+                            <div class="meter-bottom-val" id="valTemp">--℃</div>
+                        </div>
+                    </div>
+
+                    <!-- 中央：スピードメーター -->
+                    <div class="meter-box center-meter" onclick="demoSpeedToggle()" style="cursor:pointer;">
+                        <div class="meter-gauge-container">
+                            <div class="screw tl"></div><div class="screw tr"></div><div class="screw bl"></div><div class="screw br"></div>
+                            <div class="meter-ticks"></div>
+                            <div class="meter-illumination"></div>
+                            
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-135deg) translateY(-16.5vh) rotate(135deg);">0</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-105deg) translateY(-16.5vh) rotate(105deg);">20</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-75deg) translateY(-16.5vh) rotate(75deg);">40</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-45deg) translateY(-16.5vh) rotate(45deg);">60</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-15deg) translateY(-16.5vh) rotate(15deg);">80</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(15deg) translateY(-16.5vh) rotate(-15deg);">100</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(45deg) translateY(-16.5vh) rotate(-45deg);">120</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(75deg) translateY(-16.5vh) rotate(-75deg);">140</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(105deg) translateY(-16.5vh) rotate(-105deg);">160</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(135deg) translateY(-16.5vh) rotate(-135deg);">180</div>
+
+                            <div class="meter-needle" id="needleSpeed"></div>
+                            <div class="meter-center-cap"></div>
+                            <div class="meter-title-in" style="top: 75%;">SPEED</div>
+                        </div>
+                    </div>
+
+                    <!-- 右：湿度メーター -->
+                    <div class="meter-box side-meter">
+                        <div class="meter-gauge-container">
+                            <div class="screw tl"></div><div class="screw tr"></div><div class="screw bl"></div><div class="screw br"></div>
+                            <div class="meter-ticks"></div>
+                            <div class="meter-illumination"></div>
+                            
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-135deg) translateY(-10.5vh) rotate(135deg);">0</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-81deg) translateY(-10.5vh) rotate(81deg);">20</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(-27deg) translateY(-10.5vh) rotate(27deg);">40</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(27deg) translateY(-10.5vh) rotate(-27deg);">60</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(81deg) translateY(-10.5vh) rotate(-81deg);">80</div>
+                            <div class="meter-num" style="transform: translate(-50%, -50%) rotate(135deg) translateY(-10.5vh) rotate(-135deg);">100</div>
+
+                            <div class="meter-needle" id="needleHum"></div>
+                            <div class="meter-center-cap"></div>
+                            <div class="meter-title-in">HUMIDITY</div>
+                            <div class="meter-bottom-val" id="valHum">--%</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <button class="miniCurrentBtn" id="miniCurrentBtn">⌖</button>
-          </div>
+            <div id="infoScreen" class="info-screen">
+                <div class="info-content">
+                    <div class="info-sign" id="infoSign">
+                        <div class="info-sign-arrow" id="infoSignArrow">↑</div>
+                        <div class="info-sign-text" id="infoSignText">交差点</div>
+                    </div>
+                    <div class="info-road-view">
+                        <div class="road-surface"><div class="road-lane"></div></div>
+                    </div>
+                    <div class="info-bottom">
+                        <div class="info-dist-label">分岐まで 残り</div>
+                        <div class="info-dist"><span id="infoDistVal">--</span> m</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-          <div class="rightArea">
-            <div class="mediaTop">
-              <div class="mediaThumb">
-                <div class="mediaCrowd"></div>
-                <div class="mediaTitle" id="mediaNowTitle">Drive Music</div>
-              </div>
+        <!-- 下部パネル -->
+        <div class="hardware-panel">
+            <div class="hw-group left-group">
+                <div class="luxury-badge">NEON EXCLUSIVE</div>
+                <div class="hw-btn sound-btn" onclick="showToast('地点登録完了')">★</div>
+                <div class="hw-btn sound-btn hw-btn-text" onclick="showToast('ソース切替 (ダミー)')">AV</div>
+                <div class="hw-btn sound-btn neon-blue" style="font-size: 1.8rem;" onclick="openYouTubeMusic()">♪</div>
             </div>
 
-            <div class="mediaControls">
-              <div class="mediaMode" id="mediaMode">AUDIO</div>
-              <div class="mediaButtons">
-                <button class="circleBtn" id="prevTrackBtn">⏮</button>
-                <button class="circleBtn" id="playPauseBtn">▶</button>
-                <button class="circleBtn" id="nextTrackBtn">⏭</button>
-              </div>
+            <!-- 中央の時計 -->
+            <div class="analog-clock" onclick="showToast('気象・方位取得中...')">
+                <div class="clock-inner">
+                    <div class="clock-face">
+                        <div class="clock-sunray"></div>
+                        <div class="clock-tachymeter"></div>
+                        <div class="clock-logo">CHASER<br><span>EXCLUSIVE</span></div>
+
+                        <div class="clock-index index-12"></div>
+                        <div class="clock-index index-3"></div>
+                        <div class="clock-index index-6"></div>
+                        <div class="clock-index index-9"></div>
+                        
+                        <div class="sub-dial left-dial">
+                            <div class="sub-hand" id="clockTempHand"></div>
+                            <div class="sub-label">TEMP</div>
+                        </div>
+                        <div class="sub-dial right-dial">
+                            <div class="sub-hand" id="clockHumHand"></div>
+                            <div class="sub-label">HUM</div>
+                        </div>
+                        <div class="sub-dial bottom-dial">
+                            <div class="sub-hand" id="clockDirHand"></div>
+                        </div>
+                        
+                        <div class="hand hour-hand" id="hourHand"></div>
+                        <div class="hand minute-hand" id="minuteHand"></div>
+                        <div class="hand second-hand" id="secondHand"></div>
+                        <div class="center-dot"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="rightApps">
-              <button class="rightTile" id="tileMap">
-                <div class="rightTileIcon">🗺️</div>
-                <div>MAP</div>
-              </button>
-
-              <button class="rightTile" id="tileAudio">
-                <div class="rightTileIcon">🎵</div>
-                <div>AUDIO</div>
-              </button>
-
-              <button class="rightTile" id="tilePhone">
-                <div class="rightTileIcon">📞</div>
-                <div>PHONE</div>
-              </button>
-
-              <button class="rightTile" id="tileApps">
-                <div class="rightTileIcon">▦</div>
-                <div>APPS</div>
-              </button>
+            <div class="hw-group right-group">
+                <div class="hw-btn sound-btn neon-blue" style="font-size: 1.5rem;" onclick="openNavMenu()">▲<br><span style="font-size:0.6rem; position:absolute; top:8px;">◯</span></div>
+                <div class="hw-btn sound-btn hw-btn-text" onclick="resetCamera()">現在地</div>
+                <div class="hw-btn sound-btn" style="font-size: 1.8rem;" onclick="openModal('settingsModal')">⚙</div>
+                <div class="luxury-badge">TOYOTA CHASER</div>
             </div>
-          </div>
-
         </div>
 
-      </div>
-    </div>
-
-    <div class="hardwareBar">
-      <div class="leftStatus">
-        <div class="leftStatusTop" id="gpsStatus">GPS取得中</div>
-        <div class="clock" id="clock">--:--</div>
-      </div>
-
-      <div class="buttonStrip">
-        <button class="hwBtn" id="btnHome">
-          HOME
-          <span class="small">ホーム</span>
-        </button>
-
-        <button class="hwBtn active" id="btnNavi">
-          NAVI
-          <span class="small">地図</span>
-        </button>
-
-        <button class="hwBtn" id="btnCurrent">
-          现在地
-          <span class="small">GPS</span>
-        </button>
-
-        <button class="hwBtn" id="btnMenu">
-          MENU
-          <span class="small">メニュー</span>
-        </button>
-
-        <button class="hwBtn" id="btnAudio">
-          AUDIO
-          <span class="small">音楽</span>
-        </button>
-
-        <button class="hwBtn" id="btnBack">
-          BACK
-          <span class="small">戻る</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- MENU -->
-    <div class="overlay" id="menuOverlay">
-      <div class="panel">
-        <div class="panelHeader">
-          <div class="panelTitle">MENU</div>
-          <button class="closeBtn" data-close="menuOverlay">×</button>
-        </div>
-
-        <div class="panelBody">
-          <div class="tileGrid">
-            <button class="menuTile" id="homeRegisterBtn">
-              <strong>自宅登録</strong>
-              <small>現在地を自宅として保存</small>
-            </button>
-
-            <button class="menuTile" id="goHomeBtn">
-              <strong>自宅へ</strong>
-              <small>登録した自宅へルート検索</small>
-            </button>
-
-            <button class="menuTile" id="clearRouteBtn">
-              <strong>ルート消去</strong>
-              <small>目的地とルートを削除</small>
-            </button>
-
-            <button class="menuTile" id="toggleNightBtn">
-              <strong>画面調整</strong>
-              <small>表示トーン切替</small>
-            </button>
-
-            <button class="menuTile" id="openAppsFromMenu">
-              <strong>アプリ</strong>
-              <small>アプリランチャーを開く</small>
-            </button>
-
-            <button class="menuTile" id="openAudioFromMenu">
-              <strong>オーディオ</strong>
-              <small>音楽画面を開く</small>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ROUTE -->
-    <div class="overlay" id="routeOverlay">
-      <div class="panel">
-        <div class="panelHeader">
-          <div class="panelTitle">ROUTE SELECT</div>
-          <button class="closeBtn" data-close="routeOverlay">×</button>
-        </div>
-
-        <div class="panelBody">
-          <div style="color:#cfe8f7;font-size:14px;margin-bottom:8px;">
-            目的地: <span id="routeDestName">---</span>
-          </div>
-
-          <div class="routeModes">
-            <button class="routeMode active" data-mode="normal">一般優先</button>
-            <button class="routeMode" data-mode="fast">高速優先</button>
-            <button class="routeMode" data-mode="short">最短</button>
-            <button class="routeMode" data-mode="eco">ECO</button>
-          </div>
-
-          <div class="routeActions">
-            <button class="routeAction" data-close="routeOverlay">キャンセル</button>
-            <button class="routeAction main" id="startRouteBtn">案内開始</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- APPS -->
-    <div class="overlay" id="appsOverlay">
-      <div class="panel">
-        <div class="panelHeader">
-          <div class="panelTitle">APPS</div>
-          <button class="closeBtn" data-close="appsOverlay">×</button>
-        </div>
-
-        <div class="panelBody">
-          <div class="tileGrid">
-            <button class="menuTile" id="appTileMap">
-              <strong>ナビ</strong>
-              <small>地図画面に戻る</small>
-            </button>
-
-            <button class="menuTile" id="appTileAudio">
-              <strong>オーディオ</strong>
-              <small>音楽画面を開く</small>
-            </button>
-
-            <button class="menuTile" id="appTilePhone">
-              <strong>電話</strong>
-              <small>ダミー画面を表示</small>
-            </button>
-
-            <button class="menuTile" id="appTileSettings">
-              <strong>設定</strong>
-              <small>ダミー画面を表示</small>
-            </button>
-
-            <button class="menuTile" id="appTileCurrent">
-              <strong>現在地</strong>
-              <small>現在地に戻る</small>
-            </button>
-
-            <button class="menuTile" id="appTileHome">
-              <strong>自宅へ</strong>
-              <small>自宅ルート選択</small>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AUDIO -->
-    <div class="overlay" id="audioOverlay">
-      <div class="panel">
-        <div class="panelHeader">
-          <div class="panelTitle">AUDIO</div>
-          <button class="closeBtn" data-close="audioOverlay">×</button>
-        </div>
-
-        <div class="panelBody">
-          <div class="audioPanelInner">
-            <div class="audioArt"></div>
-
-            <div class="audioInfo">
-              <h3 id="audioSongTitle">Drive Music</h3>
-              <p id="audioArtist">Night Highway Session</p>
-              <p>デリカ純正風のオーディオ画面イメージ</p>
-
-              <div class="audioLargeButtons">
-                <button id="audioPrevLarge">⏮</button>
-                <button id="audioPlayLarge">▶</button>
-                <button id="audioNextLarge">⏭</button>
-              </div>
+        <div id="navModal" class="system-modal">
+            <div class="modal-header">🧭 目的地検索（関東エリア専用）</div>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="名称・番地 (例: トヨタ博物館, 北栄4-9-1)...">
+                <button class="search-btn sound-btn" onclick="smartSearchLocation()">🔍 検索</button>
             </div>
-          </div>
+            <!-- ★ 最大10件制限でエラー解消！ -->
+            <div class="category-grid">
+                <div class="cat-btn sound-btn" onclick="searchNearby('shop', 'convenience', 'コンビニ')">🏪 近くのコンビニ</div>
+                <div class="cat-btn sound-btn" onclick="searchNearby('amenity', 'fuel', 'ガソリンスタンド')">⛽ 近くのGS</div>
+                <div class="cat-btn sound-btn" onclick="searchNearby('amenity', 'parking', '駐車場')">🅿️ 近くの駐車場</div>
+                <div class="cat-btn sound-btn" onclick="searchNearby('shop', 'supermarket', 'スーパー')">🛒 近くのスーパー</div>
+                <div class="cat-btn sound-btn" onclick="searchNearby('amenity', 'restaurant', 'レストラン')">🍽️ 近くのレストラン</div>
+                <div class="cat-btn sound-btn" onclick="searchNearby('amenity', 'toilets', '公衆トイレ')">🚻 近くのトイレ</div>
+            </div>
+            <div class="modal-close sound-btn" onclick="closeModal('navModal')">閉じる</div>
         </div>
-      </div>
+
+        <div id="resultsModal" class="system-modal">
+            <div class="modal-header">📍 検索結果（最大10件・近い順）</div>
+            <div id="resultsListContainer" class="results-list-container"></div>
+            <div class="modal-close sound-btn" onclick="backToNavMenu()">🔙 戻る</div>
+        </div>
+
+        <div id="settingsModal" class="system-modal">
+            <div class="modal-header">⚙ システム設定</div>
+            <div class="modal-btn sound-btn" onclick="toggleRadarMode()" style="background: linear-gradient(to bottom, #003366, #001133); border-color: #00d4ff;"><span class="modal-icon">📡</span>モード切替：オービスレーダー</div>
+            <div class="modal-btn sound-btn" onclick="toggleMapModeAuto()"><span class="modal-icon">🌓</span>地図の昼夜切替：<span id="autoModeStatus">自動（Auto）</span></div>
+            <div class="modal-btn sound-btn" id="voiceBtn" onclick="toggleVoice()"><span class="modal-icon">🗣️</span>音声案内：ON</div>
+            <div class="modal-close sound-btn" onclick="closeModal('settingsModal')">閉じる</div>
+        </div>
     </div>
+    <div id="toast">通知メッセージ</div>
 
-    <div class="toast" id="toast"></div>
-  </div>
+    <script>
+        function updateClocks() {
+            let d = new Date();
+            let h = ('0' + d.getHours()).slice(-2);
+            let m = ('0' + d.getMinutes()).slice(-2);
+            document.getElementById('digitalClock').innerText = h + ':' + m;
 
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    crossorigin=""
-  ></script>
-
-  <script>
-    /* =========================
-       起動画面
-    ========================= */
-    const opening = document.getElementById("opening");
-    setTimeout(() => {
-      opening.classList.add("hide");
-      setTimeout(() => {
-        opening.style.display = "none";
-      }, 850);
-    }, 3300);
-
-    /* =========================
-       時計
-    ========================= */
-    const clockEl = document.getElementById("clock");
-    function updateClock(){
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, "0");
-      const mm = String(now.getMinutes()).padStart(2, "0");
-      clockEl.textContent = `${hh}:${mm}`;
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    /* =========================
-       マップ
-    ========================= */
-    const DEFAULT_LAT = 35.6073;
-    const DEFAULT_LON = 140.1063;
-
-    let currentLat = null;
-    let currentLon = null;
-    let currentMarker = null;
-    let destinationMarker = null;
-    let destination = null;
-    let routeLine = null;
-    let currentRoute = null;
-    let selectedRouteMode = "normal";
-    let isDarkMapTone = true;
-    let isPlaying = false;
-
-    const gpsStatus = document.getElementById("gpsStatus");
-    const routeSummaryValue = document.getElementById("routeSummaryValue");
-    const routeSummarySub = document.getElementById("routeSummarySub");
-
-    const guideArrow = document.getElementById("guideArrow");
-    const guideDistance = document.getElementById("guideDistance");
-    const guideText = document.getElementById("guideText");
-    const metaEta = document.getElementById("metaEta");
-
-    const map = L.map("map", {
-      zoomControl:false,
-      attributionControl:false,
-      preferCanvas:true
-    }).setView([DEFAULT_LAT, DEFAULT_LON], 14);
-
-    const tileLayer = L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {maxZoom:19}
-    ).addTo(map);
-
-    function applyMapTone(){
-      const pane = document.querySelector(".leaflet-tile-pane");
-      if(!pane) return;
-      if(isDarkMapTone){
-        pane.style.filter = "saturate(.84) brightness(.78) contrast(1.04)";
-      }else{
-        pane.style.filter = "saturate(.96) brightness(1) contrast(1)";
-      }
-    }
-
-    setTimeout(applyMapTone, 300);
-
-    const myIcon = L.divIcon({
-      className:"",
-      html:'<div class="myMarker"></div>',
-      iconSize:[22,22],
-      iconAnchor:[11,11]
-    });
-
-    const destIcon = L.divIcon({
-      className:"",
-      html:'<div class="destMarker"></div>',
-      iconSize:[24,24],
-      iconAnchor:[8,21]
-    });
-
-    function updateCurrentMarker(){
-      if(currentLat === null || currentLon === null) return;
-
-      if(!currentMarker){
-        currentMarker = L.marker([currentLat, currentLon], {icon:myIcon}).addTo(map);
-      }else{
-        currentMarker.setLatLng([currentLat, currentLon]);
-      }
-    }
-
-    function setDestination(lat, lon, name){
-      destination = {lat, lon, name};
-
-      if(destinationMarker){
-        map.removeLayer(destinationMarker);
-      }
-
-      destinationMarker = L.marker([lat, lon], {icon:destIcon}).addTo(map);
-
-      document.getElementById("routeDestName").textContent = name;
-      routeSummaryValue.textContent = "目的地設定済み";
-      routeSummarySub.textContent = name;
-      guideDistance.textContent = "目的地設定";
-      guideText.textContent = name;
-      guideArrow.textContent = "↑";
-    }
-
-    function startGPS(){
-      if(!navigator.geolocation){
-        gpsStatus.textContent = "GPS非対応";
-        showToast("この端末ではGPSが使えません");
-        return;
-      }
-
-      gpsStatus.textContent = "GPS取得中";
-      routeSummaryValue.textContent = "GPS取得中";
-      routeSummarySub.textContent = "現在地を待っています";
-
-      navigator.geolocation.watchPosition(
-        pos => {
-          currentLat = pos.coords.latitude;
-          currentLon = pos.coords.longitude;
-
-          gpsStatus.textContent = "GPS受信中";
-          routeSummaryValue.textContent = "現在地受信中";
-
-          updateCurrentMarker();
-
-          if(!currentRoute){
-            routeSummarySub.textContent = "目的地を検索してください";
-          }
-
-          if(currentLat !== null && currentLon !== null && !currentRoute){
-            map.setView([currentLat, currentLon], Math.max(map.getZoom(), 15), {animate:true});
-          }
-        },
-        err => {
-          gpsStatus.textContent = "GPS取得失敗";
-          if(err.code === 1){
-            showToast("位置情報の使用を許可してください");
-          }else{
-            showToast("現在地を取得できませんでした");
-          }
-        },
-        {
-          enableHighAccuracy:true,
-          maximumAge:1000,
-          timeout:12000
+            let hh = d.getHours() % 12; let mm = d.getMinutes(); let ss = d.getSeconds();
+            let hDeg = (hh * 30) + (mm * 0.5); let mDeg = mm * 6; let sDeg = ss * 6;
+            document.getElementById('hourHand').style.transform = `translateX(-50%) rotate(${hDeg}deg)`;
+            document.getElementById('minuteHand').style.transform = `translateX(-50%) rotate(${mDeg}deg)`;             document.getElementById('secondHand').style.transform = `translateX(-50\%) rotate(${sDeg}deg)`;
         }
-      );
-    }
-    startGPS();
+        setInterval(updateClocks, 1000); updateClocks();
 
-    /* =========================
-       検索
-    ========================= */
-    const searchInput = document.getElementById("searchInput");
-    document.getElementById("searchBtn").addEventListener("click", searchPlace);
-    searchInput.addEventListener("keydown", e => {
-      if(e.key === "Enter") searchPlace();
-    });
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let lastBeepTime = 0;
+        
+        function initAudio() {
+            if(!audioCtx) { audioCtx = new AudioContext(); }
+            if(audioCtx.state === 'suspended') { audioCtx.resume(); }
+        }
+        
+        document.body.addEventListener('touchstart', function(e) {
+            initAudio();
+            if(e.target.closest('.sound-btn')) playBeep();
+        }, {passive: true});
+        
+        document.body.addEventListener('mousedown', function(e) {
+            initAudio();
+            if(e.target.closest('.sound-btn')) playBeep();
+        });
 
-    async function searchPlace(){
-      const query = searchInput.value.trim();
-
-      if(!query){
-        showToast("住所または施設名を入力してください");
-        return;
-      }
-
-      showToast("検索中...");
-      try{
-        const url =
-          "https://nominatim.openstreetmap.org/search" +
-          "?format=jsonv2&limit=5&countrycodes=jp&accept-language=ja&q=" +
-          encodeURIComponent(query);
-
-        const response = await fetch(url);
-        const results = await response.json();
-
-        if(!results.length){
-          showToast("場所が見つかりませんでした");
-          return;
+        function playBeep() {
+            if (Date.now() - lastBeepTime < 100) return; 
+            lastBeepTime = Date.now();
+            initAudio();
+            if(!audioCtx) return;
+            try {
+                let t = audioCtx.currentTime;
+                let osc1 = audioCtx.createOscillator();
+                let gain1 = audioCtx.createGain();
+                osc1.type = 'sine'; osc1.frequency.setValueAtTime(1000, t); osc1.frequency.exponentialRampToValueAtTime(150, t + 0.04);
+                gain1.gain.setValueAtTime(0.6, t); gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
+                osc1.connect(gain1); gain1.connect(audioCtx.destination);
+                osc1.start(t); osc1.stop(t + 0.05);
+            } catch(e) {}
         }
 
-        const result = results[0];
-        const lat = Number(result.lat);
-        const lon = Number(result.lon);
-        const name = result.display_name || query;
-
-        setDestination(lat, lon, name);
-
-        map.flyTo([lat, lon], 16, {duration:0.8});
-        openOverlay("routeOverlay");
-      }catch(error){
-        console.error(error);
-        showToast("検索に失敗しました");
-      }
-    }
-
-    /* =========================
-       ルート
-    ========================= */
-    document.querySelectorAll(".routeMode").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".routeMode").forEach(x => x.classList.remove("active"));
-        btn.classList.add("active");
-        selectedRouteMode = btn.dataset.mode;
-      });
-    });
-
-    document.getElementById("startRouteBtn").addEventListener("click", calculateRoute);
-
-    function chooseRoute(routes){
-      if(routes.length === 1) return routes[0];
-
-      if(selectedRouteMode === "fast"){
-        return [...routes].sort((a,b) => a.duration - b.duration)[0];
-      }
-
-      if(selectedRouteMode === "short"){
-        return [...routes].sort((a,b) => a.distance - b.distance)[0];
-      }
-
-      if(selectedRouteMode === "eco"){
-        return [...routes].sort((a,b) => (a.distance + a.duration * 4) - (b.distance + b.duration * 4))[0];
-      }
-
-      return routes[0];
-    }
-
-    async function calculateRoute(){
-      if(currentLat === null || currentLon === null){
-        showToast("現在地が取得できていません");
-        return;
-      }
-
-      if(!destination){
-        showToast("目的地を設定してください");
-        return;
-      }
-
-      showToast("ルート検索中...");
-
-      try{
-        const url =
-          "https://router.project-osrm.org/route/v1/driving/" +
-          `${currentLon},${currentLat};${destination.lon},${destination.lat}` +
-          "?overview=full&geometries=geojson&steps=true&alternatives=true";
-
-        const response = await fetch(url);
-        const json = await response.json();
-
-        if(!json.routes || !json.routes.length){
-          showToast("ルートが見つかりませんでした");
-          return;
+        function playOrbisWarning() {
+            initAudio();
+            if(!audioCtx) return;
+            try {
+                for(let i=0; i<3; i++) {
+                    let t = audioCtx.currentTime + i * 0.2;
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'square'; osc.frequency.setValueAtTime(1800, t);
+                    gain.gain.setValueAtTime(0.4, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.start(t); osc.stop(t + 0.15);
+                }
+            } catch(e) {}
         }
 
-        currentRoute = chooseRoute(json.routes);
-        drawRoute(currentRoute.geometry.coordinates);
-        updateRouteInfo(currentRoute);
-
-        closeOverlay("routeOverlay");
-        showToast("案内を開始しました");
-      }catch(error){
-        console.error(error);
-        showToast("ルート取得に失敗しました");
-      }
-    }
-
-    function drawRoute(coordinates){
-      if(routeLine){
-        map.removeLayer(routeLine);
-      }
-
-      const latLngs = coordinates.map(c => [c[1], c[0]]);
-      routeLine = L.polyline(latLngs, {
-        color:"#58baff",
-        weight:7,
-        opacity:0.95,
-        lineCap:"round",
-        lineJoin:"round"
-      }).addTo(map);
-
-      map.fitBounds(routeLine.getBounds(), {
-        padding:[70,70]
-      });
-    }
-
-    function updateRouteInfo(route){
-      const km = route.distance / 1000;
-      const min = route.duration / 60;
-      const arrival = new Date(Date.now() + route.duration * 1000);
-      const arrivalText =
-        String(arrival.getHours()).padStart(2, "0") +
-        ":" +
-        String(arrival.getMinutes()).padStart(2, "0");
-
-      routeSummaryValue.textContent = `${km.toFixed(km < 10 ? 1 : 0)} km`;
-      routeSummarySub.textContent = `${Math.round(min)}分 / 到着 ${arrivalText}`;
-
-      guideDistance.textContent = `${Math.round(min)}分`;
-      guideText.textContent = destination ? destination.name : "目的地";
-      metaEta.textContent = arrivalText;
-
-      if(route.legs && route.legs[0] && route.legs[0].steps && route.legs[0].steps.length > 1){
-        const nextStep = route.legs[0].steps[1];
-        const modifier = nextStep.maneuver?.modifier || "";
-        guideArrow.textContent = arrowByModifier(modifier);
-        guideText.textContent = toJapaneseInstruction(nextStep);
-        guideDistance.textContent = formatDistance(nextStep.distance || 0);
-      }
-    }
-
-    function arrowByModifier(mod){
-      if(mod.includes("uturn")) return "↶";
-      if(mod.includes("sharp right")) return "↘";
-      if(mod.includes("slight right")) return "↗";
-      if(mod.includes("right")) return "→";
-      if(mod.includes("sharp left")) return "↙";
-      if(mod.includes("slight left")) return "↖";
-      if(mod.includes("left")) return "←";
-      return "↑";
-    }
-
-    function toJapaneseInstruction(step){
-      const mod = step.maneuver?.modifier || "";
-      const road = step.name || "";
-      let action = "直進です";
-
-      if(mod.includes("uturn")) action = "Uターンです";
-      else if(mod.includes("sharp right")) action = "大きく右方向です";
-      else if(mod.includes("slight right")) action = "斜め右方向です";
-      else if(mod.includes("right")) action = "右方向です";
-      else if(mod.includes("sharp left")) action = "大きく左方向です";
-      else if(mod.includes("slight left")) action = "斜め左方向です";
-      else if(mod.includes("left")) action = "左方向です";
-
-      if(road){
-        return `${road}へ${action}`;
-      }
-      return action;
-    }
-
-    function formatDistance(meters){
-      if(meters < 1000){
-        return `${Math.max(0, Math.round(meters / 10) * 10)} m`;
-      }
-      return `${(meters / 1000).toFixed(meters < 10000 ? 1 : 0)} km`;
-    }
-
-    /* =========================
-       現在地へ
-    ========================= */
-    function goCurrent(){
-      if(currentLat === null || currentLon === null){
-        showToast("現在地を取得中です");
-        return;
-      }
-      map.flyTo([currentLat, currentLon], 17, {duration:0.7});
-    }
-
-    document.getElementById("miniCurrentBtn").addEventListener("click", goCurrent);
-    document.getElementById("btnCurrent").addEventListener("click", goCurrent);
-
-    /* =========================
-       MENU / APPS / AUDIO
-    ========================= */
-    function openOverlay(id){
-      document.getElementById(id).classList.add("show");
-    }
-
-    function closeOverlay(id){
-      document.getElementById(id).classList.remove("show");
-    }
-
-    function closeAllOverlays(){
-      document.querySelectorAll(".overlay").forEach(el => el.classList.remove("show"));
-    }
-
-    document.querySelectorAll("[data-close]").forEach(btn => {
-      btn.addEventListener("click", () => closeOverlay(btn.dataset.close));
-    });
-
-    document.querySelectorAll(".overlay").forEach(overlay => {
-      overlay.addEventListener("click", e => {
-        if(e.target === overlay){
-          overlay.classList.remove("show");
+        window.onload = function() {
+            setTimeout(() => { document.getElementById('startupOverlay').classList.add('hidden'); }, 9800);
         }
-      });
-    });
 
-    document.getElementById("btnMenu").addEventListener("click", () => openOverlay("menuOverlay"));
-    document.getElementById("btnAudio").addEventListener("click", () => openOverlay("audioOverlay"));
-    document.getElementById("btnBack").addEventListener("click", () => {
-      closeAllOverlays();
-      showToast("前の画面に戻りました");
-    });
+        let voiceGuidance = true;
+        function speak(text) { if(!voiceGuidance) return; window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(text); msg.lang = 'ja-JP'; msg.rate = 1.05; window.speechSynthesis.speak(msg); }
+        function toggleVoice() { voiceGuidance = !voiceGuidance; const btn = document.getElementById('voiceBtn'); if(voiceGuidance) { btn.innerHTML = '<span class="modal-icon">🗣️</span>音声案内：ON'; showToast('🗣️ 音声案内をオンにしました'); speak('音声案内をオンにしました'); } else { btn.innerHTML = '<span class="modal-icon">🔇</span>音声案内：OFF'; showToast('🔇 音声案内をオフにしました'); } }
 
-    document.getElementById("btnHome").addEventListener("click", () => {
-      closeAllOverlays();
-      showToast("ホーム画面イメージ");
-    });
+        // ★ 関東専用マップロック設定
+        const kantoBounds = L.latLngBounds([34.5, 138.5], [37.5, 141.0]);
+        var map = L.map('map', { 
+            zoomControl: false,
+            maxBounds: kantoBounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 8
+        }).setView([35.6074, 140.1065], 16);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
 
-    document.getElementById("btnNavi").addEventListener("click", () => {
-      closeAllOverlays();
-      showToast("ナビ画面です");
-    });
+        var userLat = 35.6074; var userLng = 140.1065; var isTracking = true;
+        let isHeadingUp = true; let lastHeading = 0; let prevLat = null; let prevLng = null;
+        
+        var naviIconHtml = `
+            <div id="navi-arrow" class="navi-arrow" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.8));">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                    <polygon points="50,0 10,95 50,75" fill="#ff2a2a" />
+                    <polygon points="50,0 90,95 50,75" fill="#cc0000" />
+                </svg>
+            </div>
+        `;
+        var naviIcon = L.divIcon({ className: 'navi-marker-icon', html: naviIconHtml, iconSize: [55, 55], iconAnchor: [27, 35] });
+        var userMarker = L.marker([userLat, userLng], {icon: naviIcon}).addTo(map);
 
-    document.getElementById("tileAudio").addEventListener("click", () => openOverlay("audioOverlay"));
-    document.getElementById("tileApps").addEventListener("click", () => openOverlay("appsOverlay"));
-    document.getElementById("tileMap").addEventListener("click", () => {
-      closeAllOverlays();
-      showToast("地図画面です");
-    });
-    document.getElementById("tilePhone").addEventListener("click", () => showToast("電話機能のダミーです"));
+        let isAutoMode = true;
+        let isDarkMode = true;
 
-    document.getElementById("openAppsFromMenu").addEventListener("click", () => {
-      closeOverlay("menuOverlay");
-      openOverlay("appsOverlay");
-    });
+        function updateTheme() {
+            if (!isAutoMode) return; 
+            let h = new Date().getHours();
+            let shouldBeDark = (h >= 17 || h < 6); 
+            var mapScreen = document.getElementById('mapScreen');
+            if (shouldBeDark !== isDarkMode) {
+                isDarkMode = shouldBeDark;
+                if (isDarkMode) { mapScreen.classList.add('dark-mode'); } 
+                else { mapScreen.classList.remove('dark-mode'); }
+            }
+        }
+        setInterval(updateTheme, 1000);
 
-    document.getElementById("openAudioFromMenu").addEventListener("click", () => {
-      closeOverlay("menuOverlay");
-      openOverlay("audioOverlay");
-    });
+        function toggleMapModeAuto() {
+            isAutoMode = !isAutoMode;
+            let statusText = document.getElementById('autoModeStatus');
+            var mapScreen = document.getElementById('mapScreen');
+            if (isAutoMode) {
+                statusText.innerText = "自動（Auto）"; updateTheme(); 
+            } else {
+                isDarkMode = !isDarkMode;
+                statusText.innerText = isDarkMode ? "手動（夜間）" : "手動（昼間）";
+                if (isDarkMode) { mapScreen.classList.add('dark-mode'); showToast('🌙 夜間モード（手動）'); } 
+                else { mapScreen.classList.remove('dark-mode'); showToast('🌞 昼間モード（手動）'); }
+            }
+        }
 
-    document.getElementById("appTileMap").addEventListener("click", () => {
-      closeOverlay("appsOverlay");
-      showToast("ナビ画面に戻りました");
-    });
+        // ==========================================
+        // ★ 超ゴツ・メーター・システム
+        // ==========================================
+        let isRadarMode = false;
+        let isSpeedDemoMode = false;
+        let isSweeping = false;
+        
+        let tempValue = 25; 
+        let humValue = 50;  
+        let speedValue = 0; 
 
-    document.getElementById("appTileAudio").addEventListener("click", () => {
-      closeOverlay("appsOverlay");
-      openOverlay("audioOverlay");
-    });
+        const orbisList = [
+            { lat: 35.6150, lng: 140.1100, limit: 60, warned: false },
+            { lat: 35.5900, lng: 140.0900, limit: 80, warned: false },
+            { lat: 35.6080, lng: 140.1070, limit: 50, warned: false } 
+        ];
 
-    document.getElementById("appTilePhone").addEventListener("click", () => showToast("電話アプリのダミーです"));
-    document.getElementById("appTileSettings").addEventListener("click", () => showToast("設定画面は次段階で追加できます"));
-    document.getElementById("appTileCurrent").addEventListener("click", () => {
-      closeOverlay("appsOverlay");
-      goCurrent();
-    });
+        function playMeterSweep() {
+            isSweeping = true;
+            let needles = document.querySelectorAll('.meter-needle');
+            needles.forEach(n => { n.style.transition = 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)'; n.style.transform = `translateX(-50%) rotate(135deg)`; });
+            setTimeout(() => {
+                isSweeping = false;
+                needles.forEach(n => { n.style.transition = 'transform 1.0s cubic-bezier(0.2, 0.8, 0.2, 1)'; });
+                updateMeterNeedles();
+            }, 1000);
+        }
 
-    document.getElementById("appTileHome").addEventListener("click", () => {
-      closeOverlay("appsOverlay");
-      goHomeRoute();
-    });
+        function updateMeterNeedles() {
+            if(isSweeping) return;
+            let tDeg = -135 + ((tempValue - (-10)) / 50) * 270;
+            tDeg = Math.max(-135, Math.min(135, tDeg));
+            document.getElementById('needleTemp').style.transform = `translateX(-50%) rotate(${tDeg}deg)`;
 
-    /* =========================
-       自宅
-    ========================= */
-    document.getElementById("homeRegisterBtn").addEventListener("click", () => {
-      if(currentLat === null || currentLon === null){
-        showToast("現在地を取得してから登録してください");
-        return;
-      }
+            let sDeg = -135 + (speedValue / 180) * 270;
+            sDeg = Math.max(-135, Math.min(135, sDeg));
+            document.getElementById('needleSpeed').style.transform = `translateX(-50%) rotate(${sDeg}deg)`;
 
-      localStorage.setItem("delicaHome", JSON.stringify({
-        lat:currentLat,
-        lon:currentLon
-      }));
+            let hDeg = -135 + (humValue / 100) * 270;
+            hDeg = Math.max(-135, Math.min(135, hDeg));
+            document.getElementById('needleHum').style.transform = `translateX(-50%) rotate(${hDeg}deg)`;
+        }
 
-      showToast("現在地を自宅に登録しました");
-    });
+        function toggleRadarMode() {
+            isRadarMode = !isRadarMode;
+            closeModal('settingsModal');
+            let mapScr = document.getElementById('mapScreen');
+            let radarScr = document.getElementById('radarScreen');
 
-    document.getElementById("goHomeBtn").addEventListener("click", goHomeRoute);
+            if(isRadarMode) {
+                mapScr.classList.add('hidden');
+                radarScr.classList.remove('hidden');
+                showToast('📡 ダッシュボードメーター起動');
+                speak('レーダーモード起動');
+                playMeterSweep();
+            } else {
+                radarScr.classList.add('hidden');
+                mapScr.classList.remove('hidden');
+                showToast('🗺️ ナビゲーションに戻りました');
+            }
+        }
 
-    function goHomeRoute(){
-      const raw = localStorage.getItem("delicaHome");
+        function demoSpeedToggle() {
+            isSpeedDemoMode = true;
+            speedValue += 25;
+            if (speedValue > 150) speedValue = 0;
+            updateRadarUI(speedValue, parseInt(document.getElementById('radarLimit').innerText));
+            playBeep();
+        }
 
-      if(!raw){
-        showToast("自宅が登録されていません");
-        return;
-      }
+        function updateRadarUI(speed, limit) {
+            speedValue = speed;
+            updateMeterNeedles();
 
-      const home = JSON.parse(raw);
-      setDestination(home.lat, home.lon, "自宅");
+            let speedText = document.getElementById('radarSpeed');
+            speedText.innerText = speed;
+            let sideL = document.getElementById('sideLightL');
+            let sideR = document.getElementById('sideLightR');
+            let radarScreen = document.getElementById('radarScreen');
 
-      map.flyTo([home.lat, home.lon], 16, {duration:0.7});
-      openOverlay("routeOverlay");
-    }
+            if (speed > limit) {
+                speedText.classList.add('over');
+                sideL.className = 'side-light left mode-red';
+                sideR.className = 'side-light right mode-red';
+                radarScreen.classList.add('alert-mode'); 
+            } else {
+                speedText.classList.remove('over');
+                sideL.className = 'side-light left mode-blue';
+                sideR.className = 'side-light right mode-blue';
+                radarScreen.classList.remove('alert-mode');
+            }
+        }
 
-    /* =========================
-       ルート消去
-    ========================= */
-    document.getElementById("clearRouteBtn").addEventListener("click", clearRoute);
+        let tempFetched = false;
+        function fetchWeather(lat, lng) {
+            if(tempFetched) return;
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m`)
+            .then(res => res.json())
+            .then(data => {
+                if(data && data.current) {
+                    tempValue = data.current.temperature_2m;
+                    humValue = data.current.relative_humidity_2m;
+                    document.getElementById('valTemp').innerText = tempValue + '℃';
+                    document.getElementById('valHum').innerText = humValue + '%';
+                    
+                    let tDegClock = (tempValue - 15) * 4.8; tDegClock = Math.max(-120, Math.min(120, tDegClock));
+                    let hDegClock = (humValue - 50) * 2.4; hDegClock = Math.max(-120, Math.min(120, hDegClock));
+                    document.getElementById('clockTempHand').style.transform = `translateX(-50%) rotate(${tDegClock}deg)`;
+                    document.getElementById('clockHumHand').style.transform = `translateX(-50%) rotate(${hDegClock}deg)`;
+                    
+                    tempFetched = true;
+                    updateMeterNeedles();
+                }
+            }).catch(e=>{});
+        }
 
-    function clearRoute(){
-      currentRoute = null;
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var R = 6371; var dLat = (lat2 - lat1) * Math.PI / 180; var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c;
+        }
 
-      if(routeLine){
-        map.removeLayer(routeLine);
-        routeLine = null;
-      }
+        function calculateHeadingFromGPS(lat1, lon1, lat2, lon2) {
+            const toRad = Math.PI / 180; const toDeg = 180 / Math.PI;
+            const dLon = (lon2 - lon1) * toRad;
+            const y = Math.sin(dLon) * Math.cos(lat2 * toRad);
+            const x = Math.cos(lat1 * toRad) * Math.sin(lat2 * toRad) - Math.sin(lat1 * toRad) * Math.cos(lat2 * toRad) * Math.cos(dLon);
+            let brng = Math.atan2(y, x) * toDeg;
+            return (brng + 360) % 360;
+        }
 
-      if(destinationMarker){
-        map.removeLayer(destinationMarker);
-        destinationMarker = null;
-      }
+        // GPS監視ループ
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(function(position) {
+                userLat = position.coords.latitude; userLng = position.coords.longitude;
+                userMarker.setLatLng([userLat, userLng]);
+                if(isTracking) map.setView([userLat, userLng]);
 
-      destination = null;
+                document.getElementById('tLat').innerText = userLat.toFixed(4);
+                document.getElementById('tLon').innerText = userLng.toFixed(4);
+                if(position.coords.altitude) document.getElementById('tAlt').innerText = Math.round(position.coords.altitude);
 
-      routeSummaryValue.textContent = "ルートなし";
-      routeSummarySub.textContent = "目的地を検索してください";
-      guideDistance.textContent = "ルート未設定";
-      guideText.textContent = "目的地を検索してください";
-      guideArrow.textContent = "↑";
-      metaEta.textContent = "--:--";
+                if(!tempFetched) fetchWeather(userLat, userLng);
 
-      closeAllOverlays();
-      showToast("ルートを消去しました");
-    }
+                let calculatedHeading = lastHeading;
+                if (prevLat !== null && prevLng !== null) {
+                    let moveDist = calculateDistance(prevLat, prevLng, userLat, userLng) * 1000;
+                    if (moveDist > 2) {
+                        calculatedHeading = calculateHeadingFromGPS(prevLat, prevLng, userLat, userLng);
+                        prevLat = userLat; prevLng = userLng;
+                    }
+                } else { prevLat = userLat; prevLng = userLng; }
 
-    /* =========================
-       画面トーン切替
-    ========================= */
-    document.getElementById("toggleNightBtn").addEventListener("click", () => {
-      isDarkMapTone = !isDarkMapTone;
-      applyMapTone();
-      showToast(isDarkMapTone ? "夜っぽい表示にしました" : "明るい表示にしました");
-    });
+                let currentHeading = (position.coords.heading !== null && !isNaN(position.coords.heading)) ? position.coords.heading : calculatedHeading;
+                updateArrowRotation(currentHeading);
+                document.getElementById('tHdg').innerText = Math.round(currentHeading);
+                document.getElementById('clockDirHand').style.transform = `translateX(-50%) rotate(${currentHeading}deg)`;
 
-    /* =========================
-       オーディオ
-    ========================= */
-    const songs = [
-      {title:"Drive Music", artist:"Night Highway Session"},
-      {title:"Midnight Bay", artist:"Neon Cruise"},
-      {title:"Sunrise Route", artist:"Morning Run"}
-    ];
-    let songIndex = 0;
+                // オービス判定
+                let nearestOrbis = null;
+                let minOrbisDist = Infinity;
+                orbisList.forEach(o => {
+                    let d = calculateDistance(userLat, userLng, o.lat, o.lng) * 1000;
+                    if (d < minOrbisDist) { minOrbisDist = d; nearestOrbis = o; }
+                });
 
-    function reflectSong(){
-      const song = songs[songIndex];
-      document.getElementById("audioSongTitle").textContent = song.title;
-      document.getElementById("audioArtist").textContent = song.artist;
-      document.getElementById("mediaNowTitle").textContent = song.title;
-    }
+                let currentLimit = 60;
+                let warnText = document.getElementById('radarWarnText');
 
-    function prevSong(){
-      songIndex = (songIndex - 1 + songs.length) % songs.length;
-      reflectSong();
-      showToast("前の曲へ");
-    }
+                if (nearestOrbis && minOrbisDist < 2500) {
+                    currentLimit = nearestOrbis.limit;
+                    if (isRadarMode) {
+                        warnText.style.visibility = 'visible';
+                        warnText.innerText = `!! WARNING: ORBIS !!\nDISTANCE: ${Math.round(minOrbisDist)}m`;
+                    }
+                    if (minOrbisDist < 1000 && !nearestOrbis.warned) {
+                        nearestOrbis.warned = true;
+                        playOrbisWarning();
+                        if(isRadarMode) speak(`この先、固定式オービスがあります。制限速度、${nearestOrbis.limit}キロです。`);
+                    }
+                } else {
+                    warnText.style.visibility = 'hidden';
+                    if (nearestOrbis) nearestOrbis.warned = false; 
+                }
 
-    function nextSong(){
-      songIndex = (songIndex + 1) % songs.length;
-      reflectSong();
-      showToast("次の曲へ");
-    }
+                document.getElementById('radarLimit').innerText = currentLimit;
 
-    function togglePlay(){
-      isPlaying = !isPlaying;
-      const text = isPlaying ? "⏸" : "▶";
-      document.getElementById("playPauseBtn").textContent = text;
-      document.getElementById("audioPlayLarge").textContent = text;
-      showToast(isPlaying ? "再生" : "一時停止");
-    }
+                if (!isSpeedDemoMode) {
+                    let realSpeed = position.coords.speed ? Math.round(position.coords.speed * 3.6) : 0;
+                    updateRadarUI(realSpeed, currentLimit);
+                }
 
-    document.getElementById("prevTrackBtn").addEventListener("click", prevSong);
-    document.getElementById("nextTrackBtn").addEventListener("click", nextSong);
-    document.getElementById("playPauseBtn").addEventListener("click", togglePlay);
+                // ルート案内ロジック
+                if (isRouting && destLatObj !== null) {
+                    let distKM = getDistToRouteKM(userLat, userLng);
+                    if (distKM > 0.05) {
+                        offRouteCount++; if (offRouteCount >= 2) triggerReroute();
+                    } else {
+                        offRouteCount = 0;
+                        if (routeSteps && currentStepIndex < routeSteps.length) {
+                            let step = routeSteps[currentStepIndex];
+                            let stepLat = step.maneuver.location[1]; let stepLng = step.maneuver.location[0];
+                            let distToStepMeters = calculateDistance(userLat, userLng, stepLat, stepLng) * 1000;
+                            
+                            if (currentStepIndex === routeSteps.length - 1 && distToStepMeters < 50) {
+                                showToast('🏁 目的地に到着しました！案内を終了します。');
+                                speak('目的地周辺です。案内を終了します。お疲れ様でした。');
+                                stopGuidance(false);
+                                return;
+                            }
 
-    document.getElementById("audioPrevLarge").addEventListener("click", prevSong);
-    document.getElementById("audioNextLarge").addEventListener("click", nextSong);
-    document.getElementById("audioPlayLarge").addEventListener("click", togglePlay);
+                            if (distToStepMeters < 500 && distToStepMeters > 30) {
+                                toggleInfoPanel(true, Math.round(distToStepMeters), getManeuverText(step.maneuver.type, step.maneuver.modifier, step.name), getManeuverIcon(step.maneuver.type, step.maneuver.modifier));
+                            } else if (distToStepMeters <= 30) { 
+                                currentStepIndex++; 
+                                toggleInfoPanel(false); 
+                            } else { toggleInfoPanel(false); }
+                        }
+                    }
+                }
 
-    reflectSong();
+            }, function(error) {}, { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 });
+        }
 
-    /* =========================
-       トースト
-    ========================= */
-    const toast = document.getElementById("toast");
-    let toastTimer;
+        function toggleHeadingMode() {
+            isHeadingUp = !isHeadingUp; let btn = document.getElementById('headingToggleBtn');
+            if(isHeadingUp) { btn.innerHTML = '🧭 進行方向上'; btn.classList.add('btn-active-mode'); showToast('マップを「進行方向上」にしました'); updateArrowRotation(lastHeading); } 
+            else { btn.innerHTML = '🧭 北を上 (固定)'; btn.classList.remove('btn-active-mode'); showToast('マップを「北を上」にしました'); document.getElementById('map').style.transform = `rotate(0deg)`; updateArrowRotation(lastHeading); }
+        }
 
-    function showToast(message){
-      toast.textContent = message;
-      toast.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2200);
-    }
+        function updateArrowRotation(degree) {
+            lastHeading = degree; 
+            var arrowElement = document.getElementById('navi-arrow'); var mapElement = document.getElementById('map');
+            document.getElementById('compassHand').style.transform = `translateX(-50%) rotate(${degree}deg)`;
+            if (isHeadingUp && isTracking) { mapElement.style.transform = `rotate(${-degree}deg)`; if (arrowElement) arrowElement.style.transform = `rotate(${degree}deg)`; } 
+            else { mapElement.style.transform = `rotate(0deg)`; if (arrowElement) arrowElement.style.transform = `rotate(${degree}deg)`; }
+        }
 
-    /* =========================
-       リサイズ
-    ========================= */
-    window.addEventListener("resize", () => {
-      map.invalidateSize();
-      applyMapTone();
-    });
+        map.on('dragstart', function() { isTracking = false; document.getElementById('map').style.transform = `rotate(0deg)`; });
+        function resetCamera() { isTracking = true; map.setView([userLat, userLng], map.getZoom()); showToast('📍 現在地にフォーカスしました'); updateArrowRotation(lastHeading); }
+        function zoomInMap() { map.zoomIn(); } function zoomOutMap() { map.zoomOut(); }
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'flex'; }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        function openNavMenu() { openModal('navModal'); }
+        function backToNavMenu() { closeModal('resultsModal'); openModal('navModal'); }
 
-    window.addEventListener("orientationchange", () => {
-      setTimeout(() => {
-        map.invalidateSize();
-        applyMapTone();
-      }, 350);
-    });
-  </script>
+        // ★ 通信エラーフリーズ対策（最大10件制限）
+        function searchNearby(key, value, label) {
+            showToast(`周辺の ${label} を検索中...`);
+            let query = `[out:json][timeout:10];(node["${key}"="${value}"](around:3000,${userLat},${userLng});way["${key}"="${value}"](around:3000,${userLat},${userLng}););out center 10;`;
+            let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+            fetch(url).then(res => res.json()).then(data => {
+                if(data && data.elements && data.elements.length > 0) {
+                    let results = data.elements.map(item => { 
+                        let lat = item.lat || item.center.lat; let lon = item.lon || item.center.lon;
+                        let rawName = item.tags.name || item.tags.brand || `名称不明の${label}`;
+                        let safeName = rawName.replace(/['"\\`]/g, " ");
+                        return { lat: lat, lon: lon, name: rawName, safeName: safeName, display_name: `${label}`, dist: calculateDistance(userLat, userLng, lat, lon) }; 
+                    });
+                    processMapResults(results, label);
+                } else { showToast('周辺3km以内に見つかりませんでした'); speak('周辺に見つかりませんでした'); }
+            }).catch(e => { showToast('通信エラーが発生しました'); closeModal('navModal'); });
+        }
+
+        // ★ 関東専用ハイブリッド検索
+        function smartSearchLocation() {
+            var rawKeyword = document.getElementById('searchInput').value.trim();
+            if(!rawKeyword) return;
+            showToast('AI検索エンジンで解析中...');
+            let hasNumbers = /[0-9０-９]/.test(rawKeyword);
+            
+            if (hasNumbers) {
+                fetch(`https://msearch.gsi.go.jp/address-search/AddressSearch?q=${encodeURIComponent(rawKeyword)}`)
+                .then(res => { if(!res.ok) throw new Error("GSI Network error"); return res.json(); })
+                .then(data => {
+                    if(data && data.length > 0) {
+                        let limitedData = data.slice(0, 10); 
+                        let results = limitedData.map(item => { 
+                            let safeName = item.properties.title.replace(/['"\\`]/g, " ");
+                            return { lat: item.geometry.coordinates[1], lon: item.geometry.coordinates[0], name: item.properties.title, safeName: safeName, display_name: item.properties.title, dist: calculateDistance(userLat, userLng, item.geometry.coordinates[1], item.geometry.coordinates[0]) }; 
+                        });
+                        processMapResults(results, rawKeyword);
+                    } else { fallbackToNominatim(rawKeyword); }
+                }).catch(e => fallbackToNominatim(rawKeyword));
+            } else { fallbackToNominatim(rawKeyword); }
+        }
+
+        function fallbackToNominatim(query) {
+            // ★ 関東エリアに絞り込み
+            let viewbox = `138.5,37.5,141.0,34.5`;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=jp&limit=10&viewbox=${viewbox}&bounded=1`)
+            .then(res => { if(!res.ok) throw new Error("Network error"); return res.json(); })
+            .then(data => {
+                if(data.length > 0) {
+                    let results = data.map(item => { 
+                        let rawName = item.display_name.split(',')[0];
+                        let safeName = rawName.replace(/['"\\`]/g, " ");
+                        return { lat: item.lat, lon: item.lon, name: rawName, safeName: safeName, display_name: item.display_name, dist: calculateDistance(userLat, userLng, item.lat, item.lon) }; 
+                    });
+                    processMapResults(results, query);
+                } else { showToast('目的地が見つかりませんでした'); speak('目的地が見つかりませんでした。');}
+            }).catch(e => { showToast('通信エラーが発生しました'); closeModal('navModal'); });
+        }
+
+        function processMapResults(dataArray, customTitle) {
+            dataArray.sort((a, b) => a.dist - b.dist);
+            let container = document.getElementById('resultsListContainer');
+            container.innerHTML = '';
+            
+            dataArray.forEach((item) => {
+                let div = document.createElement('div');
+                div.className = 'result-item sound-btn';
+                div.innerHTML = `<div class="result-name">📍 ${item.name}<br><span style="font-size:0.85rem; color:#aaa; font-weight:normal;">${item.display_name}</span></div><div class="result-dist">約 ${item.dist.toFixed(1)} km</div>`;
+                div.onclick = function() { selectSearchResult(item.lat, item.lon, item.safeName); };
+                container.appendChild(div);
+            });
+            
+            closeModal('navModal'); openModal('resultsModal');
+            showToast(dataArray.length + '件見つかりました'); speak('周辺の候補が見つかりました。');
+        }
+
+        function selectSearchResult(lat, lon, name) { 
+            closeModal('resultsModal'); 
+            if (isRadarMode) { toggleRadarMode(); } // マップに戻す
+            startRoute(lat, lon, name); 
+        }
+
+        // ★ 完全無敵のオフライン優先絶対案内システム（0.1秒起動）
+        function startRoute(destLat, destLng, destName) {
+            try {
+                stopGuidance(true); 
+                destLatObj = parseFloat(destLat); 
+                destLngObj = parseFloat(destLng); 
+                destNameObj = destName;
+                
+                destinationMarker = L.marker([destLatObj, destLngObj]).addTo(map).bindPopup('🏁 ' + destName).openPopup();
+                showToast('ルート案内を開始します...');
+                speak('ルート案内を開始します。');
+
+                let uLng = parseFloat(userLng); let uLat = parseFloat(userLat);
+                let initialDist = calculateDistance(uLat, uLng, destLatObj, destLngObj);
+                let initialTime = Math.round((initialDist / 40) * 60); 
+
+                // ★ フリーズ完全回避：サーバー通信前に、システム自身で「直線ルート」を即座に作り画面に出す！
+                let mockData = {
+                    routes: [{
+                        geometry: { type: "LineString", coordinates: [[uLng, uLat], [destLngObj, destLatObj]] },
+                        distance: initialDist * 1000, duration: initialTime * 60,
+                        legs: [{ steps: [
+                            { maneuver: { type: "depart", modifier: "straight", location: [uLng, uLat] }, name: "ルート案内" },
+                            { maneuver: { type: "arrive", modifier: "straight", location: [destLngObj, destLatObj] }, name: "目的地" }
+                        ]}]
+                    }]
+                };
+                
+                // ここで確実にプレビュー画面を出す！
+                processRouteData(mockData, destName, false); 
+
+                // ★ その後、裏側で本物の道順（OSRM）を探しにいく（通信エラーでも画面はすでに出ているから安心）
+                var primaryUrl = `https://router.project-osrm.org/route/v1/driving/${uLng},${uLat};${destLngObj},${destLatObj}?overview=full&geometries=geojson&steps=true`;
+                fetch(primaryUrl)
+                .then(res => { if(!res.ok) throw new Error("Network error"); return res.json(); })
+                .then(data => { 
+                    if(data.code === 'Ok') { 
+                        if(routeLayer) map.removeLayer(routeLayer);
+                        processRouteData(data, destName, true); // 見つかれば本物の道沿いにフワッと上書きする
+                    }
+                }).catch(err => {
+                    console.log("OSRM fallback to offline mode");
+                });
+            } catch (e) {
+                showToast('システムエラーが発生しました');
+            }
+        }
+
+        function triggerReroute() {
+            isRecalculating = true; offRouteCount = 0; showToast('ルートを外れました。再探索します...'); speak('ルートを外れました。リルートします。');
+            var url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${destLngObj},${destLatObj}?overview=full&geometries=geojson&steps=true`;
+            fetch(url).then(res => res.json()).then(data => {
+                if(routeLayer) map.removeLayer(routeLayer);
+                processRouteData(data, destNameObj, true); isRecalculating = false;
+            }).catch(err => { isRecalculating = false; showToast('再探索に失敗しました'); });
+        }
+
+        function processRouteData(data, destName, isReroute) {
+            if(data.routes && data.routes.length > 0) {
+                var routeGeoJSON = data.routes[0].geometry;
+                routeLineCoords = routeGeoJSON.coordinates; 
+                routeLayer = L.geoJSON(routeGeoJSON, { style: {color: '#00d4ff', weight: 8, opacity: 0.8} }).addTo(map);
+                
+                currentRouteDist = data.routes[0].distance / 1000;
+                currentRouteTime = Math.round(data.routes[0].duration / 60);
+                
+                if(data.routes[0].legs && data.routes[0].legs[0].steps) { routeSteps = data.routes[0].legs[0].steps; currentStepIndex = 0; }
+                
+                if (!isReroute) {
+                    map.fitBounds(routeLayer.getBounds(), {padding: [50, 50]});
+                    document.getElementById('previewTitle').innerText = '目的地: ' + destName;
+                    selectRouteMode('toll'); document.getElementById('routePreview').classList.add('show');
+                } else { selectRouteMode(currentRouteMode); map.setView([userLat, userLng], 16); }
+            }
+        }
+
+        function selectRouteMode(mode) {
+            currentRouteMode = mode;
+            document.getElementById('tabToll').classList.remove('active'); document.getElementById('tabLocal').classList.remove('active');
+            let timeMin = isNaN(currentRouteTime) ? 0 : currentRouteTime; 
+            let costText = "無料";
+            if(mode === 'toll') { document.getElementById('tabToll').classList.add('active'); if(currentRouteDist > 5) { costText = `約 ${Math.floor((150 + (currentRouteDist * 24.6)) / 10) * 10} 円`; } } 
+            else { document.getElementById('tabLocal').classList.add('active'); costText = "無料 (一般道)"; timeMin = Math.round(timeMin * 1.5); }
+            document.getElementById('previewInfo').innerText = `距離: ${currentRouteDist.toFixed(1)} km | 時間: 約 ${timeMin} 分 | 料金: ${costText}`;
+        }
+
+        function startGuidance() {
+            document.getElementById('routePreview').classList.remove('show');
+            isRouting = true; isTracking = true; offRouteCount = 0; map.setView([userLat, userLng], 16);
+            updateArrowRotation(lastHeading);
+        }
+
+        function goHome() { closeModal('navModal'); startRoute(35.6560, 140.1030, '自宅'); }
+
+        function stopGuidance(silent = false) {
+            if(!silent) { closeModal('navModal'); closeModal('resultsModal'); }
+            document.getElementById('routePreview').classList.remove('show');
+            if(routeLayer) map.removeLayer(routeLayer); if(destinationMarker) map.removeLayer(destinationMarker);
+            destLatObj = null; destLngObj = null; routeLineCoords = []; routeSteps = []; isRouting = false; offRouteCount = 0;
+            toggleInfoPanel(false); 
+            if(!silent) { showToast('🛑 案内を終了しました'); resetCamera(); }
+        }
+
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById("toast"); toast.innerText = message; toast.className = "show";
+            clearTimeout(toastTimeout); toastTimeout = setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3500);
+        }
+    </script>
 </body>
 </html>
