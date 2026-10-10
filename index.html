@@ -4,70 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#03070d" />
-  <title>NAVI-ZETE v88</title>
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    crossorigin="">
-  </script>
+  <title>NAVI-ZETE v89</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
-    :root{
-      --cyan:#00d4ff;
-      --cyan2:#0077ff;
-      --green:#00ff7b;
-      --bg:#03070d;
-      --panel:#07111d;
-      --line:#31506a;
-      --text:#eef8ff;
-      --muted:#9cb0c0;
-      --danger:#ff334f
-    }
-
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent
-    }
-
-    html,body{
-      margin:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      background:#02050a;
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
-      user-select:none
-    }
-
-    button,input{
-      font:inherit
-    }
-
-    button{
-      color:inherit
-    }
-
-    .app{
-      width:100vw;
-      height:100dvh;
-      display:flex;
-      flex-direction:column;
-      background:#02050a
-    }
-
-    .main{
-      position:relative;
-      flex:1;
-      min-height:0;
-      overflow:hidden
-    }
+    :root{--cyan:#00d4ff;--cyan2:#0077ff;--green:#00ff7b;--bg:#03070d;--panel:#07111d;--line:#31506a;--text:#eef8ff;--muted:#9cb0c0;--danger:#ff334f}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02050a;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;user-select:none}
+    button,input{font:inherit}
+    button{color:inherit}
+    .app{width:100vw;height:100dvh;display:flex;flex-direction:column;background:#02050a}
+    .main{position:relative;flex:1;min-height:0;overflow:hidden}
 
     #map{
       position:absolute;
@@ -79,13 +27,8 @@
       will-change:transform
     }
 
-    .dark .leaflet-tile{
-      filter:invert(.93) hue-rotate(178deg) saturate(.75) brightness(.62) contrast(1.18)
-    }
-
-    .leaflet-control-attribution{
-      display:none!important
-    }
+    .dark .leaflet-tile{filter:invert(.93) hue-rotate(178deg) saturate(.75) brightness(.62) contrast(1.18)}
+    .leaflet-control-attribution{display:none!important}
 
     .topbar{
       position:absolute;
@@ -109,10 +52,7 @@
       color:#d7ffe8
     }
 
-    .hud b{
-      color:#fff;
-      font-size:14px
-    }
+    .hud b{color:#fff;font-size:14px}
 
     .clock{
       font-size:34px;
@@ -169,20 +109,9 @@
       box-shadow:0 7px 18px #0008
     }
 
-    .route-status.show{
-      display:block
-    }
-
-    .route-status strong{
-      color:var(--cyan);
-      font-size:16px
-    }
-
-    .route-status span{
-      color:#bcd0df;
-      font-size:12px;
-      margin-left:8px
-    }
+    .route-status.show{display:block}
+    .route-status strong{color:var(--cyan);font-size:16px}
+    .route-status span{color:#bcd0df;font-size:12px;margin-left:8px}
 
     .guidance{
       position:absolute;
@@ -201,9 +130,7 @@
       gap:12px
     }
 
-    .guidance.show{
-      right:0
-    }
+    .guidance.show{right:0}
 
     .guide-sign{
       border:2px solid var(--cyan);
@@ -214,16 +141,8 @@
       box-shadow:0 0 20px #00d4ff3d
     }
 
-    .guide-arrow{
-      font-size:58px;
-      line-height:1
-    }
-
-    .guide-text{
-      font-size:18px;
-      font-weight:900;
-      margin-top:7px
-    }
+    .guide-arrow{font-size:58px;line-height:1}
+    .guide-text{font-size:18px;font-weight:900;margin-top:7px}
 
     .guide-road{
       flex:1;
@@ -254,14 +173,8 @@
       padding:10px
     }
 
-    .guide-dist small{
-      color:#9fb0be
-    }
-
-    .guide-dist b{
-      display:block;
-      font-size:34px
-    }
+    .guide-dist small{color:#9fb0be}
+    .guide-dist b{display:block;font-size:34px}
 
     .bottom{
       height:94px;
@@ -278,16 +191,8 @@
       padding:8px 10px max(8px,env(safe-area-inset-bottom))
     }
 
-    .group{
-      display:flex;
-      gap:7px;
-      align-items:center;
-      min-width:0
-    }
-
-    .group.right{
-      justify-content:flex-end
-    }
+    .group{display:flex;gap:7px;align-items:center;min-width:0}
+    .group.right{justify-content:flex-end}
 
     .badge{
       height:38px;
@@ -334,9 +239,7 @@
       box-shadow:0 0 10px var(--cyan)
     }
 
-    .hw:active{
-      transform:translateY(3px)
-    }
+    .hw:active{transform:translateY(3px)}
 
     .analog{
       width:76px;
@@ -375,21 +278,9 @@
       border-radius:2px
     }
 
-    .hh{
-      width:4px;
-      height:20px
-    }
-
-    .mh{
-      width:3px;
-      height:29px
-    }
-
-    .sh{
-      width:1px;
-      height:32px;
-      background:#ff445e
-    }
+    .hh{width:4px;height:20px}
+    .mh{width:3px;height:29px}
+    .sh{width:1px;height:32px;background:#ff445e}
 
     .modal{
       position:fixed;
@@ -405,9 +296,7 @@
       overflow:auto
     }
 
-    .modal.show{
-      display:flex
-    }
+    .modal.show{display:flex}
 
     .modal h2{
       font-size:22px;
@@ -494,21 +383,9 @@
       color:white
     }
 
-    .row .name{
-      font-weight:900
-    }
-
-    .row small{
-      display:block;
-      color:#aebcc6;
-      margin-top:4px
-    }
-
-    .row .dist{
-      white-space:nowrap;
-      color:#7eeaff;
-      font-weight:800
-    }
+    .row .name{font-weight:900}
+    .row small{display:block;color:#aebcc6;margin-top:4px}
+    .row .dist{white-space:nowrap;color:#7eeaff;font-weight:800}
 
     .setting{
       border:1px solid #485968;
@@ -520,9 +397,7 @@
       text-align:left
     }
 
-    .setting strong{
-      color:var(--cyan)
-    }
+    .setting strong{color:var(--cyan)}
 
     .route-preview{
       position:fixed;
@@ -537,9 +412,7 @@
       transition:bottom .3s ease
     }
 
-    .route-preview.show{
-      bottom:94px
-    }
+    .route-preview.show{bottom:94px}
 
     .preview-title{
       text-align:center;
@@ -669,9 +542,7 @@
       pointer-events:none
     }
 
-    .boot{
-      text-align:center
-    }
+    .boot{text-align:center}
 
     .boot .micro{
       letter-spacing:5px;
@@ -764,6 +635,7 @@
 <div class="app" id="app">
 
   <div class="main" id="mapScreen">
+
     <div id="map"></div>
 
     <div class="topbar">
@@ -776,7 +648,9 @@
         SPD:<b id="tSpd">0</b>km/h
       </div>
 
-      <div class="clock" id="digitalClock">--:--</div>
+      <div class="clock" id="digitalClock">
+        --:--
+      </div>
 
     </div>
 
@@ -1157,27 +1031,27 @@
 'use strict';
 
 /* =========================
-   NAVI-ZETE v88
+   NAVI-ZETE v89
    Map: OpenStreetMap / Leaflet
    Routing: Valhalla
-   Search: Nominatim + Overpass
+   Search: Nominatim + 国土地理院 + Overpass
    ========================= */
 
-const DEFAULT_POS = {
+const DEFAULT_POS={
   lat:35.6074,
   lng:140.1065
 };
 
-const KANTO_BOUNDS =
+const KANTO_BOUNDS=
   L.latLngBounds(
     [34.35,138.35],
     [37.65,141.25]
   );
 
-const VALHALLA =
+const VALHALLA=
   'https://valhalla1.openstreetmap.de/route';
 
-const OVERPASS_ENDPOINTS = [
+const OVERPASS_ENDPOINTS=[
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter'
 ];
@@ -1187,52 +1061,52 @@ let userMarker;
 let destinationMarker;
 let routeLayer;
 
-let userLat = DEFAULT_POS.lat;
-let userLng = DEFAULT_POS.lng;
+let userLat=DEFAULT_POS.lat;
+let userLng=DEFAULT_POS.lng;
 
-let gpsFix = false;
-let gpsAccuracy = null;
-let lastGpsTime = 0;
-let gpsWatchId = null;
-let gpsRequesting = false;
-let firstGpsFix = true;
+let gpsFix=false;
+let gpsAccuracy=null;
+let lastGpsTime=0;
+let gpsWatchId=null;
+let gpsRequesting=false;
+let firstGpsFix=true;
 
-let prevLat = null;
-let prevLng = null;
+let prevLat=null;
+let prevLng=null;
 
-let lastHeading = 0;
-let lastSpeed = 0;
+let lastHeading=0;
+let lastSpeed=0;
 
-let isTracking = true;
-let isHeadingUp = true;
+let isTracking=true;
+let isHeadingUp=true;
 
-let voiceGuidance = true;
-let mapMode = 'auto';
-let accuracyDisplay = false;
+let voiceGuidance=true;
+let mapMode='auto';
+let accuracyDisplay=false;
 
-let destLatObj = null;
-let destLngObj = null;
-let destNameObj = '';
+let destLatObj=null;
+let destLngObj=null;
+let destNameObj='';
 
-let routeCandidates = {};
-let currentRouteMode = 'recommended';
-let activeRoute = null;
+let routeCandidates={};
+let currentRouteMode='recommended';
+let activeRoute=null;
 
-let routeCoords = [];
-let routeCumMeters = [];
-let routeSteps = [];
-let currentStepIndex = 0;
+let routeCoords=[];
+let routeCumMeters=[];
+let routeSteps=[];
+let currentStepIndex=0;
 
-let isRouting = false;
-let offRouteCount = 0;
-let lastRerouteAt = 0;
+let isRouting=false;
+let offRouteCount=0;
+let lastRerouteAt=0;
 
-let spokenKeys = new Set();
+let spokenKeys=new Set();
 
-let lastWeatherAt = 0;
-let toastTimer = null;
+let lastWeatherAt=0;
+let toastTimer=null;
 
-const routeProfiles = {
+const routeProfiles={
 
   recommended:{
     label:'推奨',
@@ -1289,7 +1163,7 @@ const routeProfiles = {
 
 function init(){
 
-  map = L.map(
+  map=L.map(
     'map',
     {
       zoomControl:false,
@@ -1310,7 +1184,7 @@ function init(){
     }
   ).addTo(map);
 
-  const icon = L.divIcon({
+  const icon=L.divIcon({
 
     className:'',
 
@@ -1334,26 +1208,21 @@ function init(){
           transform-origin:50% 58%
         "
       >
-
         <svg viewBox="0 0 100 100">
-
           <polygon
             points="50,2 12,94 50,75"
             fill="#ff4159">
           </polygon>
-
           <polygon
             points="50,2 88,94 50,75"
             fill="#b60020">
           </polygon>
-
         </svg>
-
       </div>
     `
   });
 
-  userMarker = L.marker(
+  userMarker=L.marker(
     [userLat,userLng],
     {
       icon,
@@ -1365,20 +1234,16 @@ function init(){
   map.on(
     'dragstart zoomstart',
     ()=>{
-
-      isTracking = false;
+      isTracking=false;
 
       if(isHeadingUp){
         resetMapRotationOnly();
       }
-
     }
   );
 
   applyTheme();
-
   startGPS();
-
   updateClock();
 
   setInterval(
@@ -1402,7 +1267,6 @@ function init(){
   );
 
   initAudioEvents();
-
 }
 
 function initAudioEvents(){
@@ -1410,59 +1274,56 @@ function initAudioEvents(){
   document.addEventListener(
     'pointerdown',
     e=>{
-
       if(
         e.target.closest('.sound-btn')
       ){
         beep();
       }
-
     },
     {
       passive:true
     }
   );
-
 }
 
 let audioCtx;
-let lastBeep = 0;
+let lastBeep=0;
 
 function beep(){
 
   if(
-    Date.now() - lastBeep < 80
+    Date.now()-lastBeep<80
   ){
     return;
   }
 
-  lastBeep = Date.now();
+  lastBeep=Date.now();
 
   try{
 
-    audioCtx =
-      audioCtx ||
-      new (
-        window.AudioContext ||
+    audioCtx=
+      audioCtx||
+      new(
+        window.AudioContext||
         window.webkitAudioContext
       )();
 
     if(
-      audioCtx.state === 'suspended'
+      audioCtx.state==='suspended'
     ){
       audioCtx.resume();
     }
 
-    const o =
+    const o=
       audioCtx.createOscillator();
 
-    const g =
+    const g=
       audioCtx.createGain();
 
-    const t =
+    const t=
       audioCtx.currentTime;
 
-    o.type = 'sine';
+    o.type='sine';
 
     o.frequency.setValueAtTime(
       850,
@@ -1471,7 +1332,7 @@ function beep(){
 
     o.frequency.exponentialRampToValueAtTime(
       180,
-      t + .045
+      t+.045
     );
 
     g.gain.setValueAtTime(
@@ -1481,27 +1342,25 @@ function beep(){
 
     g.gain.exponentialRampToValueAtTime(
       .005,
-      t + .05
+      t+.05
     );
 
     o.connect(g);
     g.connect(audioCtx.destination);
 
     o.start(t);
-    o.stop(t + .055);
+    o.stop(t+.055);
 
   }catch(_){}
-
 }
 
 function updateClock(){
 
-  const d =
-    new Date();
+  const d=new Date();
 
   document
     .getElementById('digitalClock')
-    .textContent =
+    .textContent=
       d.toLocaleTimeString(
         'ja-JP',
         {
@@ -1511,48 +1370,47 @@ function updateClock(){
         }
       );
 
-  const h =
-    (d.getHours()%12)*30 +
+  const h=
+    (d.getHours()%12)*30+
     d.getMinutes()*.5;
 
-  const m =
+  const m=
     d.getMinutes()*6;
 
-  const s =
+  const s=
     d.getSeconds()*6;
 
   document
     .getElementById('hourHand')
     .style
-    .transform =
+    .transform=
       `translateX(-50%) rotate(${h}deg)`;
 
   document
     .getElementById('minuteHand')
     .style
-    .transform =
+    .transform=
       `translateX(-50%) rotate(${m}deg)`;
 
   document
     .getElementById('secondHand')
     .style
-    .transform =
+    .transform=
       `translateX(-50%) rotate(${s}deg)`;
-
 }
 
 function applyTheme(){
 
-  const hour =
+  const hour=
     new Date().getHours();
 
-  const dark =
-    mapMode === 'night' ||
+  const dark=
+    mapMode==='night'||
     (
-      mapMode === 'auto' &&
+      mapMode==='auto'&&
       (
-        hour >= 17 ||
-        hour < 6
+        hour>=17||
+        hour<6
       )
     );
 
@@ -1566,96 +1424,109 @@ function applyTheme(){
 
   document
     .getElementById('mapModeLabel')
-    .textContent =
-      mapMode === 'auto'
-      ? '自動'
-      : dark
-      ? '夜間'
-      : '昼間';
-
+    .textContent=
+      mapMode==='auto'
+      ?
+      '自動'
+      :
+      dark
+      ?
+      '夜間'
+      :
+      '昼間';
 }
 
 function toggleMapMode(){
 
-  mapMode =
-    mapMode === 'auto'
-    ? 'day'
-    : mapMode === 'day'
-    ? 'night'
-    : 'auto';
+  mapMode=
+    mapMode==='auto'
+    ?
+    'day'
+    :
+    mapMode==='day'
+    ?
+    'night'
+    :
+    'auto';
 
   applyTheme();
 
   showToast(
-    '地図表示：' +
+    '地図表示：'+
     document
       .getElementById('mapModeLabel')
       .textContent
   );
-
 }
 
 function toggleVoice(){
 
-  voiceGuidance =
+  voiceGuidance=
     !voiceGuidance;
 
   document
     .getElementById('voiceLabel')
-    .textContent =
+    .textContent=
       voiceGuidance
-      ? 'ON'
-      : 'OFF';
+      ?
+      'ON'
+      :
+      'OFF';
 
   showToast(
-    '音声案内：' +
+    '音声案内：'+
     (
       voiceGuidance
-      ? 'ON'
-      : 'OFF'
+      ?
+      'ON'
+      :
+      'OFF'
     )
   );
 
-  if(voiceGuidance){
+  if(
+    voiceGuidance
+  ){
     speak(
       '音声案内をオンにしました'
     );
   }
-
 }
 
 function toggleGpsAccuracy(){
 
-  accuracyDisplay =
+  accuracyDisplay=
     !accuracyDisplay;
 
   document
     .getElementById('accuracyLabel')
-    .textContent =
+    .textContent=
       accuracyDisplay
-      ? 'ON'
-      : 'OFF';
+      ?
+      'ON'
+      :
+      'OFF';
 
   showToast(
-    accuracyDisplay &&
-    gpsAccuracy
+    accuracyDisplay&&gpsAccuracy
     ?
     `GPS精度 約±${Math.round(gpsAccuracy)}メートル`
     :
-    'GPS精度表示：' +
+    'GPS精度表示：'+
     (
       accuracyDisplay
-      ? 'ON'
-      : 'OFF'
+      ?
+      'ON'
+      :
+      'OFF'
     )
   );
-
 }
 
 function speak(text){
 
   if(
-    !voiceGuidance ||
+    !voiceGuidance||
     !('speechSynthesis' in window)
   ){
     return;
@@ -1665,29 +1536,23 @@ function speak(text){
 
     speechSynthesis.cancel();
 
-    const u =
+    const u=
       new SpeechSynthesisUtterance(
         text
       );
 
-    u.lang =
-      'ja-JP';
-
-    u.rate =
-      1.03;
+    u.lang='ja-JP';
+    u.rate=1.03;
 
     speechSynthesis.speak(u);
 
   }catch(_){}
-
 }
 
-const GEO_OPTIONS = {
-
+const GEO_OPTIONS={
   enableHighAccuracy:true,
   maximumAge:0,
   timeout:15000
-
 };
 
 function startGPS(){
@@ -1701,7 +1566,6 @@ function startGPS(){
     );
 
     return;
-
   }
 
   requestCurrentLocation(
@@ -1710,16 +1574,14 @@ function startGPS(){
   );
 
   if(
-    gpsWatchId != null
+    gpsWatchId!=null
   ){
-
     navigator.geolocation.clearWatch(
       gpsWatchId
     );
-
   }
 
-  gpsWatchId =
+  gpsWatchId=
     navigator.geolocation.watchPosition(
 
       onGps,
@@ -1731,14 +1593,12 @@ function startGPS(){
         maximumAge:1000,
         timeout:15000
       }
-
     );
-
 }
 
 function requestCurrentLocation(
-  center = true,
-  showMessage = true
+  center=true,
+  showMessage=true
 ){
 
   if(
@@ -1750,7 +1610,6 @@ function requestCurrentLocation(
     );
 
     return;
-
   }
 
   if(
@@ -1759,25 +1618,21 @@ function requestCurrentLocation(
     return;
   }
 
-  gpsRequesting =
-    true;
+  gpsRequesting=true;
 
   if(
     showMessage
   ){
-
     showToast(
       '📡 現在地を取得しています…'
     );
-
   }
 
   navigator.geolocation.getCurrentPosition(
 
     p=>{
 
-      gpsRequesting =
-        false;
+      gpsRequesting=false;
 
       onGps(
         p,
@@ -1799,48 +1654,31 @@ function requestCurrentLocation(
             ''
           }`
         );
-
       }
-
     },
 
     e=>{
-
-      gpsRequesting =
-        false;
-
+      gpsRequesting=false;
       onGpsError(e);
-
     },
 
     GEO_OPTIONS
-
   );
-
 }
 
 function onGps(
   p,
-  opts = {}
+  opts={}
 ){
 
-  const c =
-    p.coords;
+  const c=p.coords;
 
-  gpsFix =
-    true;
+  gpsFix=true;
+  gpsAccuracy=c.accuracy;
+  lastGpsTime=Date.now();
 
-  gpsAccuracy =
-    c.accuracy;
-
-  lastGpsTime =
-    Date.now();
-
-  userLat =
-    c.latitude;
-
-  userLng =
-    c.longitude;
+  userLat=c.latitude;
+  userLng=c.longitude;
 
   userMarker.setOpacity(1);
 
@@ -1853,39 +1691,41 @@ function onGps(
 
   document
     .getElementById('tLat')
-    .textContent =
+    .textContent=
       userLat.toFixed(4);
 
   document
     .getElementById('tLon')
-    .textContent =
+    .textContent=
       userLng.toFixed(4);
 
   document
     .getElementById('tAlt')
-    .textContent =
-      c.altitude == null
-      ? '---'
-      : Math.round(c.altitude);
+    .textContent=
+      c.altitude==null
+      ?
+      '---'
+      :
+      Math.round(c.altitude);
 
-  lastSpeed =
-    c.speed != null &&
-    c.speed >= 0
+  lastSpeed=
+    c.speed!=null&&
+    c.speed>=0
     ?
     Math.round(
-      c.speed * 3.6
+      c.speed*3.6
     )
     :
     0;
 
   document
     .getElementById('tSpd')
-    .textContent =
+    .textContent=
       lastSpeed;
 
-  let hdg =
+  let hdg=
     (
-      c.heading != null &&
+      c.heading!=null&&
       !Number.isNaN(c.heading)
     )
     ?
@@ -1894,11 +1734,11 @@ function onGps(
     null;
 
   if(
-    hdg == null &&
-    prevLat != null
+    hdg==null&&
+    prevLat!=null
   ){
 
-    const moved =
+    const moved=
       distanceMeters(
         prevLat,
         prevLng,
@@ -1907,53 +1747,42 @@ function onGps(
       );
 
     if(
-      moved > 3
+      moved>3
     ){
-
-      hdg =
+      hdg=
         bearing(
           prevLat,
           prevLng,
           userLat,
           userLng
         );
-
     }
-
   }
 
   if(
-    hdg != null
+    hdg!=null
   ){
 
-    lastHeading =
-      hdg;
+    lastHeading=hdg;
 
     document
       .getElementById('tHdg')
-      .textContent =
+      .textContent=
         Math.round(hdg);
 
     updateRotation(hdg);
-
   }
 
-  prevLat =
-    userLat;
-
-  prevLng =
-    userLng;
+  prevLat=userLat;
+  prevLng=userLng;
 
   if(
-    firstGpsFix ||
+    firstGpsFix||
     opts.forceCenter
   ){
 
-    firstGpsFix =
-      false;
-
-    isTracking =
-      true;
+    firstGpsFix=false;
+    isTracking=true;
 
     map.setView(
       [
@@ -1979,95 +1808,84 @@ function onGps(
         animate:false
       }
     );
-
   }
 
   if(
-    Date.now() - lastWeatherAt >
-    30 * 60 * 1000
+    Date.now()-lastWeatherAt>
+    30*60*1000
   ){
-
     refreshWeather(true);
-
   }
 
   if(
-    accuracyDisplay &&
-    Math.random() < .06
+    accuracyDisplay&&
+    Math.random()<.06
   ){
-
     showToast(
       `GPS精度 約±${Math.round(gpsAccuracy)}m`
     );
-
   }
 
   if(
     isRouting
   ){
-
     updateGuidance();
-
   }
-
 }
 
 function onGpsError(err){
 
-  const msg =
-    err.code === 1
+  const msg=
+    err.code===1
     ?
     '位置情報が許可されていません。Safariのサイト設定で「位置情報」を許可してください'
     :
-    err.code === 2
+    err.code===2
     ?
     '現在地を取得できません。屋外または窓際で再度お試しください'
     :
     '位置情報の取得がタイムアウトしました。現在地ボタンで再取得できます';
 
   showToast(
-    '📡 ' + msg
+    '📡 '+msg
   );
-
 }
 
 function updateRotation(deg){
 
-  const mapEl =
+  const mapEl=
     document.getElementById('map');
 
-  const arrow =
+  const arrow=
     document.getElementById('naviArrow');
 
   if(
-    isHeadingUp &&
+    isHeadingUp&&
     isTracking
   ){
 
-    mapEl.style.transform =
+    mapEl.style.transform=
       `rotate(${-deg}deg)`;
 
-    if(arrow){
-
-      arrow.style.transform =
+    if(
+      arrow
+    ){
+      arrow.style.transform=
         `rotate(${deg}deg)`;
-
     }
 
   }else{
 
-    mapEl.style.transform =
+    mapEl.style.transform=
       'rotate(0deg)';
 
-    if(arrow){
-
-      arrow.style.transform =
+    if(
+      arrow
+    ){
+      arrow.style.transform=
         `rotate(${deg}deg)`;
-
     }
-
   }
-
 }
 
 function resetMapRotationOnly(){
@@ -2075,17 +1893,16 @@ function resetMapRotationOnly(){
   document
     .getElementById('map')
     .style
-    .transform =
+    .transform=
       'rotate(0deg)';
-
 }
 
 function toggleHeadingMode(){
 
-  isHeadingUp =
+  isHeadingUp=
     !isHeadingUp;
 
-  const b =
+  const b=
     document.getElementById(
       'headingToggleBtn'
     );
@@ -2095,7 +1912,7 @@ function toggleHeadingMode(){
     isHeadingUp
   );
 
-  b.textContent =
+  b.textContent=
     isHeadingUp
     ?
     '🧭 進行方向上'
@@ -2105,13 +1922,11 @@ function toggleHeadingMode(){
   updateRotation(
     lastHeading
   );
-
 }
 
 function resetCamera(){
 
-  isTracking =
-    true;
+  isTracking=true;
 
   if(
     gpsFix
@@ -2144,29 +1959,23 @@ function resetCamera(){
       true,
       true
     );
-
   }
-
 }
 
 function zoomInMap(){
-
   map.zoomIn();
-
 }
 
 function zoomOutMap(){
-
   map.zoomOut();
-
 }
 
 async function refreshWeather(
-  silent = false
+  silent=false
 ){
 
   if(
-    !gpsFix &&
+    !gpsFix&&
     !silent
   ){
 
@@ -2175,31 +1984,29 @@ async function refreshWeather(
     );
 
     return;
-
   }
 
   try{
 
-    const r =
+    const r=
       await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${userLat}&longitude=${userLng}&current=temperature_2m,relative_humidity_2m`
       );
 
-    const d =
+    const d=
       await r.json();
 
-    lastWeatherAt =
+    lastWeatherAt=
       Date.now();
 
     if(
-      !silent &&
+      !silent&&
       d.current
     ){
 
       showToast(
         `🌡 ${Math.round(d.current.temperature_2m)}℃　湿度 ${Math.round(d.current.relative_humidity_2m)}%`
       );
-
     }
 
   }catch(_){
@@ -2207,33 +2014,25 @@ async function refreshWeather(
     if(
       !silent
     ){
-
       showToast(
         '気象情報を取得できませんでした'
       );
-
     }
-
   }
-
 }
 
 function openModal(id){
-
   document
     .getElementById(id)
     ?.classList
     .add('show');
-
 }
 
 function closeModal(id){
-
   document
     .getElementById(id)
     ?.classList
     .remove('show');
-
 }
 
 function closeAllModals(){
@@ -2244,7 +2043,6 @@ function closeAllModals(){
       x=>
         x.classList.remove('show')
     );
-
 }
 
 function openNavMenu(){
@@ -2254,7 +2052,6 @@ function openNavMenu(){
   openModal(
     'navModal'
   );
-
 }
 
 function backToNavMenu(){
@@ -2266,19 +2063,18 @@ function backToNavMenu(){
   openModal(
     'navModal'
   );
-
 }
 
 async function smartSearchLocation(){
 
-  const q =
+  const raw=
     document
       .getElementById('searchInput')
       .value
       .trim();
 
   if(
-    !q
+    !raw
   ){
 
     showToast(
@@ -2286,115 +2082,375 @@ async function smartSearchLocation(){
     );
 
     return;
-
   }
+
+  const q=
+    normalizeSearchQuery(raw);
 
   showToast(
-    '🔎 目的地を検索中…'
+    '🔎 住所・名称を検索中…'
   );
 
-  try{
+  const tasks=[
+    searchNominatim(q),
+    searchGsiAddress(q)
+  ];
 
-    const params =
-      new URLSearchParams(
-        {
-          format:'jsonv2',
-          q:q + ', Japan',
-          countrycodes:'jp',
-          limit:'10',
-          addressdetails:'1'
-        }
-      );
-
-    const r =
-      await fetch(
-        'https://nominatim.openstreetmap.org/search?' +
-        params.toString(),
-        {
-          headers:{
-            'Accept-Language':'ja'
-          }
-        }
-      );
-
-    if(
-      !r.ok
-    ){
-      throw new Error();
-    }
-
-    const data =
-      await r.json();
-
-    const results =
-      data
-      .map(
-        x=>({
-
-          lat:+x.lat,
-
-          lon:+x.lon,
-
-          name:
-            x.name ||
-            x.display_name.split(',')[0],
-
-          display:
-            x.display_name,
-
-          dist:
-            distanceMeters(
-              userLat,
-              userLng,
-              +x.lat,
-              +x.lon
-            ) / 1000
-
-        })
-      )
-      .filter(
-        x=>
-          KANTO_BOUNDS.contains(
-            [
-              x.lat,
-              x.lon
-            ]
-          )
-      )
-      .sort(
-        (a,b)=>
-          a.dist - b.dist
-      )
-      .slice(
-        0,
-        10
-      );
-
-    if(
-      !results.length
-    ){
-
-      showToast(
-        '関東エリア内に候補が見つかりませんでした'
-      );
-
-      return;
-
-    }
-
-    showResults(
-      results,
-      '目的地検索'
+  const settled=
+    await Promise.allSettled(
+      tasks
     );
 
-  }catch(e){
+  let results=[];
 
-    showToast(
-      '検索サーバーに接続できませんでした'
-    );
+  for(
+    const item of settled
+  ){
 
+    if(
+      item.status==='fulfilled'&&
+      Array.isArray(item.value)
+    ){
+      results.push(
+        ...item.value
+      );
+    }
   }
 
+  results=
+    dedupeSearchResults(results)
+    .filter(
+      x=>
+        Number.isFinite(x.lat)&&
+        Number.isFinite(x.lon)
+    )
+    .filter(
+      x=>
+        KANTO_BOUNDS.contains(
+          [
+            x.lat,
+            x.lon
+          ]
+        )
+    );
+
+  for(
+    const item of results
+  ){
+
+    item.dist=
+      gpsFix
+      ?
+      distanceMeters(
+        userLat,
+        userLng,
+        item.lat,
+        item.lon
+      )/1000
+      :
+      null;
+
+    item.matchScore=
+      searchMatchScore(
+        q,
+        item.name,
+        item.display
+      );
+  }
+
+  results.sort(
+    (a,b)=>{
+
+      if(
+        a.matchScore!==b.matchScore
+      ){
+        return a.matchScore-b.matchScore;
+      }
+
+      if(
+        a.dist!=null&&
+        b.dist!=null
+      ){
+        return a.dist-b.dist;
+      }
+
+      return(
+        a.name||''
+      ).localeCompare(
+        b.name||'',
+        'ja'
+      );
+    }
+  );
+
+  results=
+    results.slice(
+      0,
+      15
+    );
+
+  if(
+    !results.length
+  ){
+
+    showToast(
+      '候補が見つかりませんでした。住所は「県・市区町村・番地」まで入れると見つかりやすいです'
+    );
+
+    return;
+  }
+
+  showResults(
+    results,
+    '住所・名称検索'
+  );
+}
+
+function normalizeSearchQuery(text){
+
+  return String(text)
+    .normalize('NFKC')
+    .replace(
+      /[‐-‒–—―−ー]/g,
+      '-'
+    )
+    .replace(
+      /\s+/g,
+      ' '
+    )
+    .trim();
+}
+
+async function searchNominatim(q){
+
+  const params=
+    new URLSearchParams(
+      {
+        format:'jsonv2',
+        q,
+        countrycodes:'jp',
+        limit:'20',
+        addressdetails:'1',
+        namedetails:'1',
+        extratags:'1',
+        'accept-language':'ja'
+      }
+    );
+
+  if(
+    gpsFix
+  ){
+
+    const dLat=1.0;
+    const dLon=1.2;
+
+    params.set(
+      'viewbox',
+      `${userLng-dLon},${userLat+dLat},${userLng+dLon},${userLat-dLat}`
+    );
+
+    params.set(
+      'bounded',
+      '0'
+    );
+
+  }else{
+
+    params.set(
+      'viewbox',
+      '138.35,37.65,141.25,34.35'
+    );
+
+    params.set(
+      'bounded',
+      '0'
+    );
+  }
+
+  const r=
+    await fetch(
+      'https://nominatim.openstreetmap.org/search?'+
+      params.toString(),
+      {
+        headers:{
+          'Accept-Language':'ja'
+        }
+      }
+    );
+
+  if(
+    !r.ok
+  ){
+    throw new Error(
+      'Nominatim '+r.status
+    );
+  }
+
+  const data=
+    await r.json();
+
+  return data.map(
+    x=>{
+
+      const a=
+        x.address||{};
+
+      const nd=
+        x.namedetails||{};
+
+      const name=
+        nd['name:ja']||
+        x.name||
+        nd.name||
+        a.amenity||
+        a.shop||
+        a.tourism||
+        a.leisure||
+        x.display_name?.split(',')[0]||
+        '名称不明';
+
+      return{
+        lat:+x.lat,
+        lon:+x.lon,
+        name,
+        display:x.display_name||'',
+        source:'OSM'
+      };
+    }
+  );
+}
+
+async function searchGsiAddress(q){
+
+  const r=
+    await fetch(
+      'https://msearch.gsi.go.jp/address-search/AddressSearch?q='+
+      encodeURIComponent(q)
+    );
+
+  if(
+    !r.ok
+  ){
+    throw new Error(
+      'GSI '+r.status
+    );
+  }
+
+  const data=
+    await r.json();
+
+  if(
+    !Array.isArray(data)
+  ){
+    return[];
+  }
+
+  return data.map(
+    x=>{
+
+      const coords=
+        x?.geometry?.coordinates||
+        [];
+
+      const title=
+        x?.properties?.title||
+        q;
+
+      return{
+        lat:+coords[1],
+        lon:+coords[0],
+        name:title,
+        display:title,
+        source:'GSI'
+      };
+    }
+  );
+}
+
+function dedupeSearchResults(items){
+
+  const seen=
+    new Set();
+
+  const out=[];
+
+  for(
+    const x of items
+  ){
+
+    if(
+      !Number.isFinite(+x.lat)||
+      !Number.isFinite(+x.lon)
+    ){
+      continue;
+    }
+
+    const key=
+      `${(+x.lat).toFixed(5)},${(+x.lon).toFixed(5)}`;
+
+    if(
+      seen.has(key)
+    ){
+      continue;
+    }
+
+    seen.add(key);
+
+    out.push(
+      {
+        ...x,
+        lat:+x.lat,
+        lon:+x.lon
+      }
+    );
+  }
+
+  return out;
+}
+
+function searchMatchScore(
+  query,
+  name='',
+  display=''
+){
+
+  const q=
+    normalizeSearchQuery(query)
+    .toLowerCase();
+
+  const n=
+    normalizeSearchQuery(name)
+    .toLowerCase();
+
+  const d=
+    normalizeSearchQuery(display)
+    .toLowerCase();
+
+  if(
+    n===q
+  ){
+    return 0;
+  }
+
+  if(
+    n.startsWith(q)
+  ){
+    return 1;
+  }
+
+  if(
+    n.includes(q)
+  ){
+    return 2;
+  }
+
+  if(
+    d.includes(q)
+  ){
+    return 3;
+  }
+
+  return 4;
 }
 
 async function searchNearby(
@@ -2411,14 +2467,13 @@ async function searchNearby(
     );
 
     return;
-
   }
 
   showToast(
     `🔎 近くの${label}を検索中…`
   );
 
-  const blocks = [];
+  const blocks=[];
 
   for(
     const f of filters
@@ -2435,13 +2490,12 @@ async function searchNearby(
     blocks.push(
       `relation["${f.k}"="${f.v}"](around:5000,${userLat},${userLng});`
     );
-
   }
 
-  const query =
+  const query=
     `[out:json][timeout:14];(${blocks.join('')});out center tags 40;`;
 
-  let data = null;
+  let data=null;
 
   for(
     const endpoint of OVERPASS_ENDPOINTS
@@ -2449,10 +2503,10 @@ async function searchNearby(
 
     try{
 
-      const r =
+      const r=
         await fetch(
-          endpoint +
-          '?data=' +
+          endpoint+
+          '?data='+
           encodeURIComponent(query)
         );
 
@@ -2462,7 +2516,7 @@ async function searchNearby(
         throw new Error();
       }
 
-      data =
+      data=
         await r.json();
 
       if(
@@ -2472,7 +2526,6 @@ async function searchNearby(
       }
 
     }catch(_){}
-
   }
 
   if(
@@ -2484,35 +2537,33 @@ async function searchNearby(
     );
 
     return;
-
   }
 
-  const seen =
+  const seen=
     new Set();
 
-  const results =
-    [];
+  const results=[];
 
   for(
     const x of data.elements
   ){
 
-    const lat =
-      x.lat ??
+    const lat=
+      x.lat??
       x.center?.lat;
 
-    const lon =
-      x.lon ??
+    const lon=
+      x.lon??
       x.center?.lon;
 
     if(
-      lat == null ||
-      lon == null
+      lat==null||
+      lon==null
     ){
       continue;
     }
 
-    const key =
+    const key=
       `${lat.toFixed(5)},${lon.toFixed(5)}`;
 
     if(
@@ -2523,17 +2574,17 @@ async function searchNearby(
 
     seen.add(key);
 
-    const tags =
-      x.tags || {};
+    const tags=
+      x.tags||{};
 
-    const name =
-      tags['name:ja'] ||
-      tags.name ||
-      tags.brand ||
-      tags.operator ||
+    const name=
+      tags['name:ja']||
+      tags.name||
+      tags.brand||
+      tags.operator||
       `名称不明の${label}`;
 
-    const detail =
+    const detail=
       [
         tags['addr:city'],
         tags['addr:suburb'],
@@ -2556,15 +2607,14 @@ async function searchNearby(
             userLng,
             +lat,
             +lon
-          ) / 1000
+          )/1000
       }
     );
-
   }
 
   results.sort(
     (a,b)=>
-      a.dist - b.dist
+      a.dist-b.dist
   );
 
   if(
@@ -2576,7 +2626,6 @@ async function searchNearby(
     );
 
     return;
-
   }
 
   showResults(
@@ -2586,7 +2635,6 @@ async function searchNearby(
     ),
     `近くの${label}`
   );
-
 }
 
 function showResults(
@@ -2594,33 +2642,52 @@ function showResults(
   title
 ){
 
-  const box =
+  const box=
     document.getElementById(
       'resultsList'
     );
 
-  box.innerHTML =
-    '';
+  box.innerHTML='';
 
   document
     .getElementById('resultsTitle')
-    .textContent =
-      '📍 ' +
-      title +
-      '（近い順）';
+    .textContent=
+      '📍 '+
+      title+
+      (
+        gpsFix
+        ?
+        '（近い順）'
+        :
+        ''
+      );
 
   results.forEach(
     item=>{
 
-      const b =
+      const b=
         document.createElement(
           'button'
         );
 
-      b.className =
+      b.className=
         'row sound-btn';
 
-      b.innerHTML =
+      const distText=
+        item.dist==null
+        ?
+        ''
+        :
+        `${item.dist.toFixed(1)} km`;
+
+      const src=
+        item.source==='GSI'
+        ?
+        '住所'
+        :
+        '名称/施設';
+
+      b.innerHTML=
         `
           <span>
 
@@ -2629,17 +2696,21 @@ function showResults(
             </span>
 
             <small>
-              ${escapeHtml(item.display || '')}
+              ${escapeHtml(item.display||'')}
+              <br>
+              <span style="color:#6ecfff">
+                ${src}
+              </span>
             </small>
 
           </span>
 
           <span class="dist">
-            ${item.dist.toFixed(1)} km
+            ${distText}
           </span>
         `;
 
-      b.onclick =
+      b.onclick=
         ()=>
           selectSearchResult(
             item.lat,
@@ -2648,7 +2719,6 @@ function showResults(
           );
 
       box.appendChild(b);
-
     }
   );
 
@@ -2659,7 +2729,6 @@ function showResults(
   openModal(
     'resultsModal'
   );
-
 }
 
 function selectSearchResult(
@@ -2675,7 +2744,6 @@ function selectSearchResult(
     +lon,
     name
   );
-
 }
 
 async function startRoute(
@@ -2697,21 +2765,15 @@ async function startRoute(
     );
 
     return;
-
   }
 
   stopGuidance(true);
 
-  destLatObj =
-    destLat;
+  destLatObj=destLat;
+  destLngObj=destLng;
+  destNameObj=destName;
 
-  destLngObj =
-    destLng;
-
-  destNameObj =
-    destName;
-
-  destinationMarker =
+  destinationMarker=
     L.marker(
       [
         destLatObj,
@@ -2723,27 +2785,22 @@ async function startRoute(
     )
     .addTo(map)
     .bindPopup(
-      '🏁 ' + destName
+      '🏁 '+destName
     );
 
-  routeCandidates =
-    {};
-
-  currentRouteMode =
-    'recommended';
-
-  activeRoute =
-    null;
+  routeCandidates={};
+  currentRouteMode='recommended';
+  activeRoute=null;
 
   document
     .getElementById('previewTitle')
-    .textContent =
-      '目的地：' +
+    .textContent=
+      '目的地：'+
       destName;
 
   document
     .getElementById('previewInfo')
-    .innerHTML =
+    .innerHTML=
       '<span class="loading"></span>5種類のルートを探索しています…';
 
   document
@@ -2753,8 +2810,7 @@ async function startRoute(
 
   document
     .getElementById('startGuideBtn')
-    .disabled =
-      true;
+    .disabled=true;
 
   document
     .querySelectorAll('.route-choice')
@@ -2762,8 +2818,7 @@ async function startRoute(
       b=>
         b.classList.toggle(
           'active',
-          b.dataset.mode ===
-          'recommended'
+          b.dataset.mode==='recommended'
         )
     );
 
@@ -2771,7 +2826,7 @@ async function startRoute(
     'ルートを探索しています…'
   );
 
-  const jobs =
+  const jobs=
     Object.entries(
       routeProfiles
     )
@@ -2785,7 +2840,7 @@ async function startRoute(
 
         try{
 
-          const candidate =
+          const candidate=
             await fetchValhallaRoute(
               mode,
               profile,
@@ -2795,15 +2850,13 @@ async function startRoute(
               destLngObj
             );
 
-          routeCandidates[mode] =
+          routeCandidates[mode]=
             candidate;
 
           if(
-            mode === currentRouteMode
+            mode===currentRouteMode
           ){
-
             showCandidate(mode);
-
           }
 
           updateRouteButtonState(
@@ -2823,9 +2876,7 @@ async function startRoute(
             mode,
             false
           );
-
         }
-
       }
     );
 
@@ -2839,7 +2890,7 @@ async function startRoute(
     ]
   ){
 
-    const first =
+    const first=
       Object.keys(
         routeCandidates
       )[0];
@@ -2848,13 +2899,13 @@ async function startRoute(
       first
     ){
 
-      currentRouteMode =
+      currentRouteMode=
         first;
 
-      showCandidate(first);
-
+      showCandidate(
+        first
+      );
     }
-
   }
 
   if(
@@ -2865,7 +2916,7 @@ async function startRoute(
 
     document
       .getElementById('previewInfo')
-      .innerHTML =
+      .innerHTML=
         `
           <b>
             ルートを取得できませんでした
@@ -2879,9 +2930,7 @@ async function startRoute(
     showToast(
       'ルート探索に失敗しました'
     );
-
   }
-
 }
 
 async function fetchValhallaRoute(
@@ -2893,7 +2942,7 @@ async function fetchValhallaRoute(
   toLng
 ){
 
-  const req = {
+  const req={
 
     locations:[
       {
@@ -2932,13 +2981,12 @@ async function fetchValhallaRoute(
       'geojson',
 
     alternates:1
-
   };
 
-  const ctrl =
+  const ctrl=
     new AbortController();
 
-  const timer =
+  const timer=
     setTimeout(
       ()=>
         ctrl.abort(),
@@ -2947,10 +2995,10 @@ async function fetchValhallaRoute(
 
   try{
 
-    const r =
+    const r=
       await fetch(
-        VALHALLA +
-        '?json=' +
+        VALHALLA+
+        '?json='+
         encodeURIComponent(
           JSON.stringify(req)
         ),
@@ -2967,25 +3015,22 @@ async function fetchValhallaRoute(
       !r.ok
     ){
       throw new Error(
-        'HTTP ' +
-        r.status
+        'HTTP '+r.status
       );
     }
 
-    const data =
+    const data=
       await r.json();
 
     if(
       !data.routes?.length
     ){
-
       throw new Error(
         'No route'
       );
-
     }
 
-    let candidates =
+    let candidates=
       data.routes.map(
         x=>
           normalizeOsrmRoute(
@@ -2995,28 +3040,28 @@ async function fetchValhallaRoute(
       );
 
     if(
-      mode === 'fastest'
+      mode==='fastest'
     ){
 
       candidates.sort(
         (a,b)=>
-          a.duration -
+          a.duration-
           b.duration
       );
 
     }else if(
-      mode === 'eco'
+      mode==='eco'
     ){
 
       candidates.sort(
         (a,b)=>
           (
-            a.distance*1.15 +
+            a.distance*1.15+
             a.duration/120
           )
           -
           (
-            b.distance*1.15 +
+            b.distance*1.15+
             b.duration/120
           )
       );
@@ -3025,20 +3070,19 @@ async function fetchValhallaRoute(
 
       candidates.sort(
         (a,b)=>
-          a.duration -
+          a.duration-
           b.duration
       );
-
     }
 
     return candidates[0];
 
   }finally{
 
-    clearTimeout(timer);
-
+    clearTimeout(
+      timer
+    );
   }
-
 }
 
 function normalizeOsrmRoute(
@@ -3046,18 +3090,18 @@ function normalizeOsrmRoute(
   mode
 ){
 
-  const steps =
+  const steps=
     (
-      r.legs ||
+      r.legs||
       []
     )
     .flatMap(
       l=>
-        l.steps ||
+        l.steps||
         []
     );
 
-  return {
+  return{
 
     mode,
 
@@ -3065,11 +3109,11 @@ function normalizeOsrmRoute(
       r.geometry,
 
     distance:
-      +r.distance ||
+      +r.distance||
       0,
 
     duration:
-      +r.duration ||
+      +r.duration||
       0,
 
     steps:
@@ -3077,30 +3121,27 @@ function normalizeOsrmRoute(
         s=>({
 
           distance:
-            +s.distance ||
+            +s.distance||
             0,
 
           duration:
-            +s.duration ||
+            +s.duration||
             0,
 
           name:
-            s.name ||
+            s.name||
             '',
 
           maneuver:
-            s.maneuver ||
+            s.maneuver||
             {},
 
           voiceInstructions:
-            s.voiceInstructions ||
+            s.voiceInstructions||
             []
-
         })
       )
-
   };
-
 }
 
 function updateRouteButtonState(
@@ -3108,7 +3149,7 @@ function updateRouteButtonState(
   ok
 ){
 
-  const b =
+  const b=
     document.querySelector(
       `.route-choice[data-mode="${mode}"]`
     );
@@ -3119,20 +3160,17 @@ function updateRouteButtonState(
     return;
   }
 
-  b.style.opacity =
+  b.style.opacity=
     ok
     ?
     '1'
     :
     '.45';
-
 }
 
-function selectRouteMode(
-  mode
-){
+function selectRouteMode(mode){
 
-  currentRouteMode =
+  currentRouteMode=
     mode;
 
   document
@@ -3141,7 +3179,7 @@ function selectRouteMode(
       b=>
         b.classList.toggle(
           'active',
-          b.dataset.mode === mode
+          b.dataset.mode===mode
         )
     );
 
@@ -3155,23 +3193,18 @@ function selectRouteMode(
 
     document
       .getElementById('previewInfo')
-      .innerHTML =
+      .innerHTML=
         '<span class="loading"></span>このルートを探索中…';
 
     document
       .getElementById('startGuideBtn')
-      .disabled =
-        true;
-
+      .disabled=true;
   }
-
 }
 
-function showCandidate(
-  mode
-){
+function showCandidate(mode){
 
-  const r =
+  const r=
     routeCandidates[mode];
 
   if(
@@ -3180,66 +3213,63 @@ function showCandidate(
     return;
   }
 
-  activeRoute =
-    r;
+  activeRoute=r;
 
   drawRoute(
     r.geometry
   );
 
-  const km =
-    r.distance /
-    1000;
+  const km=
+    r.distance/1000;
 
-  const min =
+  const min=
     Math.max(
       1,
       Math.round(
-        r.duration /
-        60
+        r.duration/60
       )
     );
 
-  let desc = '';
+  let desc='';
 
   if(
-    mode === 'recommended'
+    mode==='recommended'
   ){
-    desc =
+    desc=
       '時間・距離・道路種別のバランス';
   }
 
   if(
-    mode === 'eco'
+    mode==='eco'
   ){
-    desc =
+    desc=
       '距離を重視し、高速・有料道路の利用をやや抑制';
   }
 
   if(
-    mode === 'fastest'
+    mode==='fastest'
   ){
-    desc =
+    desc=
       '所要時間を最優先';
   }
 
   if(
-    mode === 'local'
+    mode==='local'
   ){
-    desc =
+    desc=
       '高速道路・有料道路をできるだけ避ける';
   }
 
   if(
-    mode === 'cheap'
+    mode==='cheap'
   ){
-    desc =
+    desc=
       '有料道路を強く避け、料金の安さを優先';
   }
 
   document
     .getElementById('previewInfo')
-    .innerHTML =
+    .innerHTML=
       `
         <b>
           ${km.toFixed(1)} km
@@ -3256,26 +3286,20 @@ function showCandidate(
 
   document
     .getElementById('startGuideBtn')
-    .disabled =
-      false;
-
+    .disabled=false;
 }
 
-function drawRoute(
-  geometry
-){
+function drawRoute(geometry){
 
   if(
     routeLayer
   ){
-
     map.removeLayer(
       routeLayer
     );
-
   }
 
-  routeLayer =
+  routeLayer=
     L.geoJSON(
       geometry,
       {
@@ -3305,9 +3329,7 @@ function drawRoute(
         ]
       }
     );
-
   }
-
 }
 
 function startGuidance(){
@@ -3321,7 +3343,6 @@ function startGuidance(){
     );
 
     return;
-
   }
 
   document
@@ -3329,32 +3350,26 @@ function startGuidance(){
     .classList
     .remove('show');
 
-  isRouting =
-    true;
-
-  isTracking =
-    true;
-
-  offRouteCount =
-    0;
+  isRouting=true;
+  isTracking=true;
+  offRouteCount=0;
 
   spokenKeys.clear();
 
-  currentStepIndex =
-    0;
+  currentStepIndex=0;
 
-  routeCoords =
+  routeCoords=
     geoJsonToLngLat(
       activeRoute.geometry
     );
 
-  routeCumMeters =
+  routeCumMeters=
     buildCumulative(
       routeCoords
     );
 
-  routeSteps =
-    activeRoute.steps ||
+  routeSteps=
+    activeRoute.steps||
     [];
 
   map.setView(
@@ -3378,7 +3393,6 @@ function startGuidance(){
   speak(
     'ルート案内を開始します'
   );
-
 }
 
 function cancelRoutePreview(){
@@ -3389,32 +3403,21 @@ function cancelRoutePreview(){
     .remove('show');
 
   stopGuidance(true);
-
   resetCamera();
-
 }
 
 function stopGuidance(
-  silent = false
+  silent=false
 ){
 
-  isRouting =
-    false;
+  isRouting=false;
 
-  routeCoords =
-    [];
+  routeCoords=[];
+  routeCumMeters=[];
+  routeSteps=[];
 
-  routeCumMeters =
-    [];
-
-  routeSteps =
-    [];
-
-  currentStepIndex =
-    0;
-
-  activeRoute =
-    null;
+  currentStepIndex=0;
+  activeRoute=null;
 
   spokenKeys.clear();
 
@@ -3441,9 +3444,7 @@ function stopGuidance(
       routeLayer
     );
 
-    routeLayer =
-      null;
-
+    routeLayer=null;
   }
 
   if(
@@ -3454,9 +3455,7 @@ function stopGuidance(
       destinationMarker
     );
 
-    destinationMarker =
-      null;
-
+    destinationMarker=null;
   }
 
   if(
@@ -3470,22 +3469,20 @@ function stopGuidance(
     speak(
       '案内を終了します'
     );
-
   }
-
 }
 
 function updateGuidance(){
 
   if(
-    !isRouting ||
-    !activeRoute ||
-    routeCoords.length < 2
+    !isRouting||
+    !activeRoute||
+    routeCoords.length<2
   ){
     return;
   }
 
-  const near =
+  const near=
     nearestRoutePoint(
       userLat,
       userLng,
@@ -3493,78 +3490,73 @@ function updateGuidance(){
     );
 
   if(
-    near.distance >
+    near.distance>
     Math.max(
       70,
-      (gpsAccuracy || 20) * 1.8
+      (gpsAccuracy||20)*1.8
     )
   ){
 
     offRouteCount++;
 
     if(
-      offRouteCount >= 3 &&
-      Date.now() -
-      lastRerouteAt >
+      offRouteCount>=3&&
+      Date.now()-lastRerouteAt>
       10000
     ){
-
       triggerReroute();
-
     }
 
   }else{
 
-    offRouteCount =
-      0;
-
+    offRouteCount=0;
   }
 
-  const progress =
+  const progress=
     routeCumMeters[
       Math.min(
         near.index,
-        routeCumMeters.length - 1
+        routeCumMeters.length-1
       )
-    ] ||
+    ]||
     0;
 
-  const total =
-    routeCumMeters.at(-1) ||
+  const total=
+    routeCumMeters.at(-1)||
     activeRoute.distance;
 
-  const remaining =
+  const remaining=
     Math.max(
       0,
-      total - progress
+      total-progress
     );
 
-  const ratio =
-    total > 0
+  const ratio=
+    total>0
     ?
-    remaining / total
+    remaining/total
     :
     0;
 
-  const remainSec =
+  const remainSec=
     Math.max(
       0,
       Math.round(
-        activeRoute.duration *
+        activeRoute.duration*
         ratio
       )
     );
 
-  const eta =
+  const eta=
     new Date(
-      Date.now() +
-      remainSec * 1000
+      Date.now()+
+      remainSec*1000
     );
 
   document
     .getElementById('remainingText')
-    .textContent =
-      remaining >= 1000
+    .textContent=
+      remaining>=1000
       ?
       `残り ${(remaining/1000).toFixed(1)} km`
       :
@@ -3572,21 +3564,23 @@ function updateGuidance(){
 
   document
     .getElementById('etaText')
-    .textContent =
-      `約 ${Math.max(1,Math.round(remainSec/60))}分 / ${eta.toLocaleTimeString(
-        'ja-JP',
-        {
-          hour:'2-digit',
-          minute:'2-digit'
-        }
-      )}着`;
+    .textContent=
+      `約 ${Math.max(1,Math.round(remainSec/60))}分 / ${
+        eta.toLocaleTimeString(
+          'ja-JP',
+          {
+            hour:'2-digit',
+            minute:'2-digit'
+          }
+        )
+      }着`;
 
   document
     .getElementById('routeStatus')
     .classList
     .add('show');
 
-  const toDest =
+  const toDest=
     distanceMeters(
       userLat,
       userLng,
@@ -3595,7 +3589,7 @@ function updateGuidance(){
     );
 
   if(
-    toDest < 35
+    toDest<35
   ){
 
     showToast(
@@ -3609,20 +3603,18 @@ function updateGuidance(){
     stopGuidance(true);
 
     return;
-
   }
 
-  let bestIdx =
+  let bestIdx=
     currentStepIndex;
 
   for(
-    let i =
-      currentStepIndex;
-    i < routeSteps.length;
+    let i=currentStepIndex;
+    i<routeSteps.length;
     i++
   ){
 
-    const loc =
+    const loc=
       routeSteps[i]
       ?.maneuver
       ?.location;
@@ -3633,7 +3625,7 @@ function updateGuidance(){
       continue;
     }
 
-    const idx =
+    const idx=
       nearestCoordIndex(
         loc[1],
         loc[0],
@@ -3642,31 +3634,27 @@ function updateGuidance(){
 
     if(
       (
-        routeCumMeters[idx] ||
+        routeCumMeters[idx]||
         0
-      ) >
-      progress + 8
+      )>
+      progress+8
     ){
 
-      bestIdx =
-        i;
-
+      bestIdx=i;
       break;
-
     }
 
-    bestIdx =
+    bestIdx=
       Math.min(
-        i + 1,
-        routeSteps.length - 1
+        i+1,
+        routeSteps.length-1
       );
-
   }
 
-  currentStepIndex =
+  currentStepIndex=
     bestIdx;
 
-  const step =
+  const step=
     routeSteps[
       currentStepIndex
     ];
@@ -3677,10 +3665,10 @@ function updateGuidance(){
     return;
   }
 
-  const m =
+  const m=
     step.maneuver;
 
-  const loc =
+  const loc=
     m.location;
 
   if(
@@ -3689,34 +3677,33 @@ function updateGuidance(){
     return;
   }
 
-  const stepCoordIdx =
+  const stepCoordIdx=
     nearestCoordIndex(
       loc[1],
       loc[0],
       routeCoords
     );
 
-  const distTo =
+  const distTo=
     Math.max(
       0,
       (
         routeCumMeters[
           stepCoordIdx
-        ] ||
+        ]||
         0
-      )
-      -
+      )-
       progress
     );
 
-  const instruction =
+  const instruction=
     makeInstruction(
       step
     );
 
   document
     .getElementById('guideArrow')
-    .textContent =
+    .textContent=
       maneuverIcon(
         m.type,
         m.modifier
@@ -3724,12 +3711,12 @@ function updateGuidance(){
 
   document
     .getElementById('guideText')
-    .textContent =
+    .textContent=
       instruction;
 
   document
     .getElementById('guideDist')
-    .textContent =
+    .textContent=
       Math.round(
         distTo
       );
@@ -3739,12 +3726,12 @@ function updateGuidance(){
     .classList
     .toggle(
       'show',
-      distTo < 800 ||
-      currentStepIndex === 0
+      distTo<800||
+      currentStepIndex===0
     );
 
   for(
-    const threshold of [
+    const threshold of[
       700,
       300,
       100
@@ -3752,22 +3739,20 @@ function updateGuidance(){
   ){
 
     if(
-      distTo <= threshold
+      distTo<=threshold
     ){
 
-      const key =
+      const key=
         `${currentStepIndex}-${threshold}`;
 
       if(
         !spokenKeys.has(key)
       ){
 
-        spokenKeys.add(
-          key
-        );
+        spokenKeys.add(key);
 
-        const phr =
-          threshold >= 100
+        const phr=
+          threshold>=100
           ?
           `${threshold}メートル先、${instruction}`
           :
@@ -3776,31 +3761,26 @@ function updateGuidance(){
         speak(
           phr
         );
-
       }
 
       break;
-
     }
-
   }
-
 }
 
 async function triggerReroute(){
 
   if(
-    !isRouting ||
-    destLatObj == null
+    !isRouting||
+    destLatObj==null
   ){
     return;
   }
 
-  lastRerouteAt =
+  lastRerouteAt=
     Date.now();
 
-  offRouteCount =
-    0;
+  offRouteCount=0;
 
   showToast(
     '↻ ルートを外れました。再探索します'
@@ -3812,7 +3792,7 @@ async function triggerReroute(){
 
   try{
 
-    const newRoute =
+    const newRoute=
       await fetchValhallaRoute(
         currentRouteMode,
         routeProfiles[
@@ -3826,31 +3806,30 @@ async function triggerReroute(){
 
     routeCandidates[
       currentRouteMode
-    ] =
+    ]=
       newRoute;
 
-    activeRoute =
+    activeRoute=
       newRoute;
 
     drawRoute(
       newRoute.geometry
     );
 
-    routeCoords =
+    routeCoords=
       geoJsonToLngLat(
         newRoute.geometry
       );
 
-    routeCumMeters =
+    routeCumMeters=
       buildCumulative(
         routeCoords
       );
 
-    routeSteps =
+    routeSteps=
       newRoute.steps;
 
-    currentStepIndex =
-      0;
+    currentStepIndex=0;
 
     spokenKeys.clear();
 
@@ -3873,20 +3852,16 @@ async function triggerReroute(){
     showToast(
       '再探索に失敗しました。通信状態を確認してください'
     );
-
   }
-
 }
 
-function makeInstruction(
-  step
-){
+function makeInstruction(step){
 
-  const m =
-    step.maneuver ||
+  const m=
+    step.maneuver||
     {};
 
-  const name =
+  const name=
     step.name
     ?
     `「${step.name}」へ`
@@ -3894,122 +3869,96 @@ function makeInstruction(
     '';
 
   if(
-    m.type === 'arrive'
+    m.type==='arrive'
   ){
-
     return '目的地周辺です';
-
   }
 
   if(
-    m.type === 'depart'
+    m.type==='depart'
   ){
-
     return name
     ?
     `${name}出発`
     :
     '道なりに進む';
-
   }
 
-  const mod =
-    m.modifier ||
+  const mod=
+    m.modifier||
     'straight';
 
-  let dir =
-    '直進';
+  let dir='直進';
 
   if(
     mod.includes(
       'slight right'
     )
   ){
-
-    dir =
-      '斜め右方向';
+    dir='斜め右方向';
 
   }else if(
     mod.includes(
       'sharp right'
     )
   ){
-
-    dir =
-      '大きく右方向';
+    dir='大きく右方向';
 
   }else if(
     mod.includes(
       'right'
     )
   ){
-
-    dir =
-      '右方向';
+    dir='右方向';
 
   }else if(
     mod.includes(
       'slight left'
     )
   ){
-
-    dir =
-      '斜め左方向';
+    dir='斜め左方向';
 
   }else if(
     mod.includes(
       'sharp left'
     )
   ){
-
-    dir =
-      '大きく左方向';
+    dir='大きく左方向';
 
   }else if(
     mod.includes(
       'left'
     )
   ){
-
-    dir =
-      '左方向';
+    dir='左方向';
 
   }else if(
     mod.includes(
       'uturn'
     )
   ){
-
-    dir =
-      'Uターン';
-
+    dir='Uターン';
   }
 
   if(
-    m.type === 'roundabout' ||
-    m.type === 'rotary'
+    m.type==='roundabout'||
+    m.type==='rotary'
   ){
-
     return `ロータリーを${dir}`;
-
   }
 
   if(
-    m.type === 'merge'
+    m.type==='merge'
   ){
-
-    return `${name || '本線'}に合流`;
-
+    return `${name||'本線'}に合流`;
   }
 
   if(
-    m.type === 'on ramp' ||
-    m.type === 'off ramp' ||
-    m.type === 'ramp'
+    m.type==='on ramp'||
+    m.type==='off ramp'||
+    m.type==='ramp'
   ){
-
-    return `${name || '分岐'}を${dir}`;
-
+    return `${name||'分岐'}を${dir}`;
   }
 
   return name
@@ -4017,22 +3966,21 @@ function makeInstruction(
   `${name}${dir}`
   :
   dir;
-
 }
 
 function maneuverIcon(
   type,
-  mod = ''
+  mod=''
 ){
 
   if(
-    type === 'arrive'
+    type==='arrive'
   ){
     return '🏁';
   }
 
   if(
-    type === 'depart'
+    type==='depart'
   ){
     return '↑';
   }
@@ -4094,7 +4042,6 @@ function maneuverIcon(
   }
 
   return '↑';
-
 }
 
 function saveCurrentPoint(){
@@ -4108,10 +4055,9 @@ function saveCurrentPoint(){
     );
 
     return;
-
   }
 
-  const favs =
+  const favs=
     getFavorites();
 
   favs.unshift(
@@ -4133,7 +4079,6 @@ function saveCurrentPoint(){
 
       lat:userLat,
       lon:userLng
-
     }
   );
 
@@ -4150,7 +4095,6 @@ function saveCurrentPoint(){
   showToast(
     '★ 現在地を登録しました'
   );
-
 }
 
 function getFavorites(){
@@ -4160,17 +4104,14 @@ function getFavorites(){
     return JSON.parse(
       localStorage.getItem(
         'naviZeteFavorites'
-      )
-      ||
+      )||
       '[]'
     );
 
   }catch(_){
 
-    return [];
-
+    return[];
   }
-
 }
 
 function openFavorites(){
@@ -4179,22 +4120,21 @@ function openFavorites(){
     'navModal'
   );
 
-  const favs =
+  const favs=
     getFavorites();
 
-  const box =
+  const box=
     document.getElementById(
       'favoritesList'
     );
 
-  box.innerHTML =
-    '';
+  box.innerHTML='';
 
   if(
     !favs.length
   ){
 
-    box.innerHTML =
+    box.innerHTML=
       `
         <div
           style="
@@ -4205,7 +4145,6 @@ function openFavorites(){
           登録地点はまだありません
         </div>
       `;
-
   }
 
   favs.forEach(
@@ -4214,15 +4153,15 @@ function openFavorites(){
       i
     )=>{
 
-      const b =
+      const b=
         document.createElement(
           'button'
         );
 
-      b.className =
+      b.className=
         'row sound-btn';
 
-      b.innerHTML =
+      b.innerHTML=
         `
           <span>
 
@@ -4242,7 +4181,7 @@ function openFavorites(){
           </span>
         `;
 
-      b.onclick =
+      b.onclick=
         ()=>{
 
           closeModal(
@@ -4254,15 +4193,14 @@ function openFavorites(){
             +f.lon,
             f.name
           );
-
         };
 
-      b.oncontextmenu =
+      b.oncontextmenu=
         e=>{
 
           e.preventDefault();
 
-          const a =
+          const a=
             getFavorites();
 
           a.splice(
@@ -4276,18 +4214,15 @@ function openFavorites(){
           );
 
           openFavorites();
-
         };
 
       box.appendChild(b);
-
     }
   );
 
   openModal(
     'favoritesModal'
   );
-
 }
 
 function openYouTubeMusic(){
@@ -4297,17 +4232,16 @@ function openYouTubeMusic(){
     '_blank',
     'noopener'
   );
-
 }
 
 function showToast(msg){
 
-  const t =
+  const t=
     document.getElementById(
       'toast'
     );
 
-  t.textContent =
+  t.textContent=
     msg;
 
   t.classList.add(
@@ -4318,7 +4252,7 @@ function showToast(msg){
     toastTimer
   );
 
-  toastTimer =
+  toastTimer=
     setTimeout(
       ()=>
         t.classList.remove(
@@ -4326,25 +4260,25 @@ function showToast(msg){
         ),
       3300
     );
-
 }
 
 function escapeHtml(
-  s = ''
+  s=''
 ){
 
   return String(s)
     .replace(
       /[&<>"']/g,
-      c=>({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#39;'
-      }[c])
+      c=>(
+        {
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#39;'
+        }[c]
+      )
     );
-
 }
 
 function geoJsonToLngLat(g){
@@ -4352,55 +4286,46 @@ function geoJsonToLngLat(g){
   if(
     !g
   ){
-    return [];
+    return[];
   }
 
   if(
-    g.type === 'LineString'
+    g.type==='LineString'
   ){
-
     return g.coordinates;
-
   }
 
   if(
-    g.type === 'Feature' &&
-    g.geometry?.type === 'LineString'
+    g.type==='Feature'&&
+    g.geometry?.type==='LineString'
   ){
-
     return g.geometry.coordinates;
-
   }
 
-  return [];
-
+  return[];
 }
 
-function buildCumulative(
-  coords
-){
+function buildCumulative(coords){
 
-  const out = [0];
+  const out=[0];
 
   for(
-    let i = 1;
-    i < coords.length;
+    let i=1;
+    i<coords.length;
     i++
   ){
 
-    out[i] =
-      out[i-1] +
+    out[i]=
+      out[i-1]+
       distanceMeters(
         coords[i-1][1],
         coords[i-1][0],
         coords[i][1],
         coords[i][0]
       );
-
   }
 
   return out;
-
 }
 
 function nearestCoordIndex(
@@ -4409,23 +4334,23 @@ function nearestCoordIndex(
   coords
 ){
 
-  let best = 0;
-  let bestD = Infinity;
+  let best=0;
+  let bestD=Infinity;
 
-  const stride =
-    coords.length > 3000
+  const stride=
+    coords.length>3000
     ?
     3
     :
     1;
 
   for(
-    let i = 0;
-    i < coords.length;
-    i += stride
+    let i=0;
+    i<coords.length;
+    i+=stride
   ){
 
-    const d =
+    const d=
       distanceSqApprox(
         lat,
         lng,
@@ -4434,21 +4359,15 @@ function nearestCoordIndex(
       );
 
     if(
-      d < bestD
+      d<bestD
     ){
 
-      bestD =
-        d;
-
-      best =
-        i;
-
+      bestD=d;
+      best=i;
     }
-
   }
 
   return best;
-
 }
 
 function nearestRoutePoint(
@@ -4457,17 +4376,17 @@ function nearestRoutePoint(
   coords
 ){
 
-  const idx =
+  const idx=
     nearestCoordIndex(
       lat,
       lng,
       coords
     );
 
-  let best =
+  let best=
     idx;
 
-  let bestM =
+  let bestM=
     distanceMeters(
       lat,
       lng,
@@ -4476,20 +4395,20 @@ function nearestRoutePoint(
     );
 
   for(
-    let i =
+    let i=
       Math.max(
         0,
-        idx - 6
+        idx-6
       );
-    i <=
+    i<=
       Math.min(
-        coords.length - 1,
-        idx + 6
+        coords.length-1,
+        idx+6
       );
     i++
   ){
 
-    const d =
+    const d=
       distanceMeters(
         lat,
         lng,
@@ -4498,24 +4417,18 @@ function nearestRoutePoint(
       );
 
     if(
-      d < bestM
+      d<bestM
     ){
 
-      bestM =
-        d;
-
-      best =
-        i;
-
+      bestM=d;
+      best=i;
     }
-
   }
 
-  return {
+  return{
     index:best,
     distance:bestM
   };
-
 }
 
 function distanceSqApprox(
@@ -4525,23 +4438,21 @@ function distanceSqApprox(
   lon2
 ){
 
-  const x =
-    (lon2 - lon1)
-    *
+  const x=
+    (lon2-lon1)*
     Math.cos(
-      (lat1 + lat2) *
-      Math.PI /
+      (lat1+lat2)*
+      Math.PI/
       360
     );
 
-  const y =
-    lat2 - lat1;
+  const y=
+    lat2-lat1;
 
-  return (
-    x*x +
+  return(
+    x*x+
     y*y
   );
-
 }
 
 function distanceMeters(
@@ -4551,59 +4462,48 @@ function distanceMeters(
   lon2
 ){
 
-  const R =
+  const R=
     6371000;
 
-  const φ1 =
-    lat1 *
-    Math.PI /
+  const φ1=
+    lat1*
+    Math.PI/
     180;
 
-  const φ2 =
-    lat2 *
-    Math.PI /
+  const φ2=
+    lat2*
+    Math.PI/
     180;
 
-  const dφ =
-    (
-      lat2 -
-      lat1
-    )
-    *
-    Math.PI /
+  const dφ=
+    (lat2-lat1)*
+    Math.PI/
     180;
 
-  const dλ =
-    (
-      lon2 -
-      lon1
-    )
-    *
-    Math.PI /
+  const dλ=
+    (lon2-lon1)*
+    Math.PI/
     180;
 
-  const a =
+  const a=
     Math.sin(
-      dφ / 2
-    ) ** 2
+      dφ/2
+    )**2
     +
-    Math.cos(φ1)
-    *
-    Math.cos(φ2)
-    *
+    Math.cos(φ1)*
+    Math.cos(φ2)*
     Math.sin(
-      dλ / 2
-    ) ** 2;
+      dλ/2
+    )**2;
 
-  return (
-    2 *
-    R *
+  return(
+    2*
+    R*
     Math.atan2(
       Math.sqrt(a),
       Math.sqrt(1-a)
     )
   );
-
 }
 
 function bearing(
@@ -4613,53 +4513,42 @@ function bearing(
   lon2
 ){
 
-  const φ1 =
-    lat1 *
-    Math.PI /
+  const φ1=
+    lat1*
+    Math.PI/
     180;
 
-  const φ2 =
-    lat2 *
-    Math.PI /
+  const φ2=
+    lat2*
+    Math.PI/
     180;
 
-  const λ =
-    (
-      lon2 -
-      lon1
-    )
-    *
-    Math.PI /
+  const λ=
+    (lon2-lon1)*
+    Math.PI/
     180;
 
-  const y =
-    Math.sin(λ)
-    *
+  const y=
+    Math.sin(λ)*
     Math.cos(φ2);
 
-  const x =
-    Math.cos(φ1)
-    *
+  const x=
+    Math.cos(φ1)*
     Math.sin(φ2)
     -
-    Math.sin(φ1)
-    *
-    Math.cos(φ2)
-    *
+    Math.sin(φ1)*
+    Math.cos(φ2)*
     Math.cos(λ);
 
-  return (
+  return(
     Math.atan2(
       y,
       x
-    )
-    *
-    180 /
-    Math.PI
-    +
+    )*
+    180/
+    Math.PI+
     360
-  ) % 360;
-
+  )%360;
 }
 
 window.addEventListener(
